@@ -1,0 +1,93 @@
+{
+  "project_name": "trust_social_app",
+  "pipeline_status": "RUNNING",
+  "token_summary": {
+    "input_tokens": 514172,
+    "output_tokens": 64990,
+    "thinking_tokens": 19892,
+    "total_tokens": 579162,
+    "total_duration_seconds": 766.79
+  },
+  "roles": [
+    {
+      "role_id": "po",
+      "role_name": "Product Owner (需求分析)",
+      "avatar": "clipboard-list",
+      "status": "COMPLETED",
+      "current_task": "已生成 PRD 规范（6 个用户故事）",
+      "progress_percent": 100,
+      "current_step": "PRD Generation Complete",
+      "iteration": 0,
+      "model": "gemini-3.8-flash-medium",
+      "total_tokens": 117094,
+      "input_tokens": 105266,
+      "output_tokens": 11828,
+      "thinking_tokens": 5523,
+      "duration_seconds": 112.74
+    },
+    {
+      "role_id": "architect",
+      "role_name": "System Architect (架构设计)",
+      "avatar": "cpu",
+      "status": "COMPLETED",
+      "current_task": "架构设计完成（规划 31 个工程文件）",
+      "progress_percent": 100,
+      "current_step": "Architecture Ready",
+      "iteration": 0,
+      "model": "gemini-3.8-flash-medium",
+      "total_tokens": 144232,
+      "input_tokens": 136632,
+      "output_tokens": 7600,
+      "thinking_tokens": 4507,
+      "duration_seconds": 109.77
+    },
+    {
+      "role_id": "engineer",
+      "role_name": "Software Engineer (代码实现)",
+      "avatar": "code-2",
+      "status": "RUNNING",
+      "current_task": "全量编写业务模块代码与配置 (共 31 个文件)",
+      "progress_percent": 40,
+      "current_step": "Writing Source Code",
+      "iteration": 0,
+      "model": "claude-sonnet-5-5-medium",
+      "total_tokens": 317836,
+      "input_tokens": 272274,
+      "output_tokens": 45562,
+      "thinking_tokens": 9862,
+      "duration_seconds": 544.28
+    },
+    {
+      "role_id": "tester",
+      "role_name": "QA Engineer (接口与浏览器端点击测试)",
+      "avatar": "globe",
+      "status": "IDLE",
+      "current_task": "待命",
+      "progress_percent": 0,
+      "current_step": "",
+      "iteration": 0,
+      "model": "default",
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "thinking_tokens": 0,
+      "duration_seconds": 0.0
+    },
+    {
+      "role_id": "reviewer",
+      "role_name": "Product Reviewer (业务验收)",
+      "avatar": "shield-check",
+      "status": "IDLE",
+      "current_task": "待命",
+      "progress_percent": 0,
+      "current_step": "",
+      "iteration": 0,
+      "model": "default",
+      "total_tokens": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "thinking_tokens": 0,
+      "duration_seconds": 0.0
+    }
+  ]
+}

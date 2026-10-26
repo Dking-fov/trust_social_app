@@ -202,3 +202,114 @@ async def test_point_ledger_audit_trail(
     assert oldest["amount"] == 100
     assert oldest["balance_after"] == 100
     assert oldest["reason"] == "EDUCATION_VERIFIED"
+
+
+@pytest.mark.asyncio
+async def test_deduct_points_insufficient_balance_direct_call(
+    db_session: AsyncSession,
+    test_users_factory,
+):
+    """US-013 & US-014: Directly calling deduct_points with amount > balance raises InsufficientPointsException."""
+    user = await test_users_factory(email="broke_user@example.com", points=20)
+    with pytest.raises(InsufficientPointsException):
+        await PointsService.deduct_points(
+            db=db_session,
+            user=user,
+            amount=50,
+            reason=PointReasonEnum.EXTRA_PACK_REFRESH,
+        )
+
+
+@pytest.mark.asyncio
+async def test_daily_checkin_consecutive_days(
+    async_client: AsyncClient,
+    db_session: AsyncSession,
+    test_users_factory,
+    auth_headers_factory,
+):
+    """US-013 AC 13.1: Daily checkin allows claiming again on a new calendar day."""
+    from datetime import date, timedelta
+    from src.models.points import DailyActivityLog
+
+    user = await test_users_factory(email="checkin_regular@example.com", points=0)
+    headers = auth_headers_factory(user)
+
+    # Yesterday's check-in
+    yesterday = date.today() - timedelta(days=1)
+    past_log = DailyActivityLog(user_id=user.id, log_date=yesterday, has_checked_in=True)
+    db_session.add(past_log)
+    user.points_balance = 5
+    await db_session.commit()
+
+    # Today's check-in: succeeds and adds +5
+    resp = await async_client.post("/api/v1/points/checkin", headers=headers)
+    assert resp.status_code == 200
+    assert resp.json()["success"] is True
+    assert resp.json()["points_awarded"] == 5
+    assert resp.json()["current_balance"] == 10
+
+
+@pytest.mark.asyncio
+async def test_points_deduction_exact_zero_balance(
+    db_session: AsyncSession,
+    test_users_factory,
+):
+    """US-013 & US-014: Deducting exact available balance leaves 0 points; subsequent 1-point deduction fails."""
+    user = await test_users_factory(email="exact_zero@example.com", points=50)
+
+    # Deduct exactly 50 points
+    await PointsService.deduct_points(
+        db=db_session,
+        user=user,
+        amount=50,
+        reason=PointReasonEnum.EXTRA_PACK_REFRESH,
+        idempotency_key="exact_zero_tx_1",
+    )
+    assert user.points_balance == 0
+
+    # Attempting to deduct 1 point now fails
+    with pytest.raises(InsufficientPointsException):
+        await PointsService.deduct_points(
+            db=db_session,
+            user=user,
+            amount=1,
+            reason=PointReasonEnum.EXTRA_PACK_REFRESH,
+            idempotency_key="exact_zero_tx_2",
+        )
+
+
+@pytest.mark.asyncio
+async def test_confirmed_report_milestone_and_idempotency(
+    db_session: AsyncSession,
+    test_users_factory,
+):
+    """US-013 AC 13.1: Confirmed report awards +50 points immediately, and duplicate submissions are safely deduplicated."""
+    user = await test_users_factory(email="reporter@example.com", points=10)
+
+    key = f"confirmed_report_case_88_{user.id}"
+
+    # Award 1: credits +50
+    tx1 = await PointsService.award_points(
+        db=db_session,
+        user=user,
+        amount=50,
+        reason=PointReasonEnum.CONFIRMED_REPORT,
+        idempotency_key=key,
+        description="Violation report confirmed against bad actor (+50 reward)",
+    )
+    assert user.points_balance == 60
+    assert tx1.balance_after == 60
+
+    # Award 2 with identical key: no extra credit
+    tx2 = await PointsService.award_points(
+        db=db_session,
+        user=user,
+        amount=50,
+        reason=PointReasonEnum.CONFIRMED_REPORT,
+        idempotency_key=key,
+        description="Duplicate report event",
+    )
+    assert user.points_balance == 60
+    assert tx1.id == tx2.id
+
+

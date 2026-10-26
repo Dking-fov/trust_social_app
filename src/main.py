@@ -58,6 +58,13 @@ async def custom_exception_handler(request: Request, exc: AppBaseException):
 app.include_router(api_router)
 
 
+@app.get("/", tags=["Portal"])
+async def root_portal():
+    """Root portal redirecting to interactive Swagger API documentation."""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/docs")
+
+
 @app.get("/health", tags=["Health"])
 async def health_check():
     """Service liveness probe."""

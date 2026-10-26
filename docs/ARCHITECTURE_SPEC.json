@@ -1,0 +1,274 @@
+{
+  "project_name": "xiaohongshu-portrait-feed",
+  "tech_stack": {
+    "build_tool": "Vite 5",
+    "framework": "React 18 / TypeScript",
+    "icons": "Lucide React",
+    "language": "TypeScript 5",
+    "state_and_storage": "React Hooks + Browser LocalStorage",
+    "styling": "Tailwind CSS 3",
+    "testing": "Vitest + React Testing Library + jsdom"
+  },
+  "dependencies": [
+    "react@^18.3.1",
+    "react-dom@^18.3.1",
+    "lucide-react@^0.453.0",
+    "clsx@^2.1.1",
+    "tailwind-merge@^2.5.4",
+    "vite@^5.4.9",
+    "typescript@^5.6.3",
+    "@types/react@^18.3.11",
+    "@types/react-dom@^18.3.1",
+    "tailwindcss@^3.4.14",
+    "postcss@^8.4.47",
+    "autoprefixer@^10.4.20",
+    "vitest@^2.1.3",
+    "@testing-library/react@^16.0.1",
+    "@testing-library/jest-dom@^6.6.2",
+    "jsdom@^25.0.1"
+  ],
+  "file_tree": [
+    {
+      "path": "package.json",
+      "purpose": "Project manifest declaring dependencies, scripts (dev, build, test), and project metadata",
+      "key_symbols": [
+        "package.json"
+      ]
+    },
+    {
+      "path": "tsconfig.json",
+      "purpose": "TypeScript compiler configuration with strict typing, JSX settings, and path aliases",
+      "key_symbols": [
+        "tsconfig.json"
+      ]
+    },
+    {
+      "path": "vite.config.ts",
+      "purpose": "Vite build configuration including React plugin and test runner setup",
+      "key_symbols": [
+        "vite.config.ts"
+      ]
+    },
+    {
+      "path": "tailwind.config.js",
+      "purpose": "Tailwind CSS design token configuration (Xiaohongshu red colors, border radiuses, animations)",
+      "key_symbols": [
+        "tailwind.config.js"
+      ]
+    },
+    {
+      "path": "postcss.config.js",
+      "purpose": "PostCSS configuration for Tailwind and Autoprefixer",
+      "key_symbols": [
+        "postcss.config.js"
+      ]
+    },
+    {
+      "path": "index.html",
+      "purpose": "HTML entry point with viewport meta, font links, and root mount node",
+      "key_symbols": [
+        "index.html"
+      ]
+    },
+    {
+      "path": "src/types/portrait.ts",
+      "purpose": "TypeScript interface and type definitions for portraits, authors, categories, tags, and states",
+      "key_symbols": [
+        "PortraitItem",
+        "Creator",
+        "CategoryTag",
+        "SortOption",
+        "FilterCriteria",
+        "UserLikeRecord"
+      ]
+    },
+    {
+      "path": "src/constants/tags.ts",
+      "purpose": "Constant definitions for photography category tabs, tags, and sort dropdown options",
+      "key_symbols": [
+        "DEFAULT_CATEGORIES",
+        "CATEGORY_TAG_MAP",
+        "SORT_OPTIONS"
+      ]
+    },
+    {
+      "path": "src/data/mockPortraits.ts",
+      "purpose": "Curated high-resolution trending portrait mock dataset with diverse aspect ratios, creators, and tags",
+      "key_symbols": [
+        "MOCK_PORTRAITS",
+        "generateRandomPortraits"
+      ]
+    },
+    {
+      "path": "src/services/portraitService.ts",
+      "purpose": "Service layer handling search, tag filtering, sorting, and paginated loading of portraits",
+      "key_symbols": [
+        "getFilteredPortraits",
+        "getPortraitById",
+        "fetchPortraitBatch"
+      ]
+    },
+    {
+      "path": "src/services/storageService.ts",
+      "purpose": "LocalStorage persistence service for tracking liked posts and custom favorites",
+      "key_symbols": [
+        "getLikedPostIds",
+        "togglePostLike",
+        "isPostLiked"
+      ]
+    },
+    {
+      "path": "src/hooks/usePortraits.ts",
+      "purpose": "Custom hook managing feed state, search queries, active tags, sorting, and infinite scroll batching",
+      "key_symbols": [
+        "usePortraits"
+      ]
+    },
+    {
+      "path": "src/hooks/useLikes.ts",
+      "purpose": "Custom hook for optimistic like toggle, animated bounce state, and storage synchronization",
+      "key_symbols": [
+        "useLikes"
+      ]
+    },
+    {
+      "path": "src/hooks/useMasonryColumns.ts",
+      "purpose": "Custom hook calculating responsive column counts and balancing items across columns by height",
+      "key_symbols": [
+        "useMasonryColumns"
+      ]
+    },
+    {
+      "path": "src/components/Common/ImageWithFallback.tsx",
+      "purpose": "Resilient image component with skeleton shimmer, lazy loading, aspect ratio box, and error fallback",
+      "key_symbols": [
+        "ImageWithFallback"
+      ]
+    },
+    {
+      "path": "src/components/Common/EmptyState.tsx",
+      "purpose": "Friendly empty state view when search or filter returns no matching portrait notes",
+      "key_symbols": [
+        "EmptyState"
+      ]
+    },
+    {
+      "path": "src/components/Common/InfiniteScrollTrigger.tsx",
+      "purpose": "Bottom sentinel component utilizing IntersectionObserver to trigger loading the next page of cards",
+      "key_symbols": [
+        "InfiniteScrollTrigger"
+      ]
+    },
+    {
+      "path": "src/components/Header/Navbar.tsx",
+      "purpose": "Top header bar containing RED logo, search input bar, and hot/latest sort dropdown selector",
+      "key_symbols": [
+        "Navbar"
+      ]
+    },
+    {
+      "path": "src/components/Filter/TagFilterBar.tsx",
+      "purpose": "Horizontally scrollable trending category filter bar with Xiaohongshu red pill active highlights",
+      "key_symbols": [
+        "TagFilterBar"
+      ]
+    },
+    {
+      "path": "src/components/Waterfall/PortraitCard.tsx",
+      "purpose": "Masonry card component with portrait cover, aspect-ratio placeholder, title, author info, and like button",
+      "key_symbols": [
+        "PortraitCard"
+      ]
+    },
+    {
+      "path": "src/components/Waterfall/CardSkeleton.tsx",
+      "purpose": "Shimmering placeholder card shown while portraits are loading",
+      "key_symbols": [
+        "CardSkeleton"
+      ]
+    },
+    {
+      "path": "src/components/Waterfall/WaterfallGrid.tsx",
+      "purpose": "Responsive masonry grid container rendering multi-column unbalanced portrait flow",
+      "key_symbols": [
+        "WaterfallGrid"
+      ]
+    },
+    {
+      "path": "src/components/Modal/PortraitDetailModal.tsx",
+      "purpose": "Full-screen/split lightbox modal showing high-res photo, author notes, tags, like action, and body scroll lock",
+      "key_symbols": [
+        "PortraitDetailModal"
+      ]
+    },
+    {
+      "path": "src/App.tsx",
+      "purpose": "Root application component integrating Navbar, TagFilterBar, WaterfallGrid, DetailModal, and status toast",
+      "key_symbols": [
+        "App"
+      ]
+    },
+    {
+      "path": "src/main.tsx",
+      "purpose": "React application entrypoint rendering App into the DOM root with global styles",
+      "key_symbols": [
+        "main"
+      ]
+    },
+    {
+      "path": "tests/services/portraitService.test.ts",
+      "purpose": "Unit tests for portrait querying, searching, filtering, and sorting algorithms",
+      "key_symbols": [
+        "describe",
+        "test",
+        "expect"
+      ]
+    },
+    {
+      "path": "tests/services/storageService.test.ts",
+      "purpose": "Unit tests for LocalStorage like persistence and fault tolerance",
+      "key_symbols": [
+        "describe",
+        "test",
+        "expect"
+      ]
+    },
+    {
+      "path": "tests/hooks/useMasonryColumns.test.ts",
+      "purpose": "Unit tests for responsive column split and height balancing logic",
+      "key_symbols": [
+        "describe",
+        "test",
+        "expect"
+      ]
+    },
+    {
+      "path": "tests/hooks/useLikes.test.ts",
+      "purpose": "Unit tests for like toggle, count increment/decrement, and optimistic updates",
+      "key_symbols": [
+        "describe",
+        "test",
+        "expect"
+      ]
+    },
+    {
+      "path": "tests/components/PortraitCard.test.tsx",
+      "purpose": "Component tests for card rendering, like interaction, and image error fallback",
+      "key_symbols": [
+        "describe",
+        "test",
+        "expect"
+      ]
+    },
+    {
+      "path": "tests/components/PortraitDetailModal.test.tsx",
+      "purpose": "Component tests for modal visibility, keyboard Esc dismiss, and scroll lock",
+      "key_symbols": [
+        "describe",
+        "test",
+        "expect"
+      ]
+    }
+  ],
+  "design_notes": "Architectural Design Principles, Modularity & Integration Strategy:\n\n1. System Decomposition & Single Responsibility Principle (SRP):\n   - The application is decoupled into clean, distinct layers:\n     * Data & Domain Layer (`src/types`, `src/data`, `src/services`): Handles data structures, mock data feeds, filtering, sorting, pagination, and LocalStorage persistence.\n     * State Management & Hook Layer (`src/hooks`): Provides isolated business logic hooks (`usePortraits`, `useLikes`, `useMasonryColumns`) that can be tested independently of UI rendering.\n     * Presentation Component Layer (`src/components`): Organized into modular domains (`Header`, `Filter`, `Waterfall`, `Modal`, `Common`).\n\n2. Responsive Masonry (Waterfall) Layout Engine:\n   - Dynamic Multi-Column Distribution: Rather than relying solely on pure CSS columns (which render top-to-bottom and break ordering across columns), `useMasonryColumns` dynamically splits posts into 2 columns (<768px), 3 columns (768px-1200px), or 4-5 columns (>1200px).\n   - CLS Prevention (CLS < 0.1): Card aspect ratios are tracked and predefined; `ImageWithFallback` reserves container height with aspect-ratio CSS and renders skeleton shimmer placeholders until image load finishes.\n\n3. Performance & 60fps Scrolling:\n   - Native `loading=\"lazy\"` and `IntersectionObserver` sentinel triggers for infinite scroll batches.\n   - Debounced search queries and throttled scroll triggers prevent excessive state re-computations.\n   - Optimistic updates for engagement interactions (like/favorite) update the UI instantaneously, syncing to LocalStorage in the background.\n\n4. Interactive Detail Lightbox & Modal Experience:\n   - Full-bleed or split-pane modal view on desktop and drawer-style sheet on mobile.\n   - Body scroll locking (`overflow: hidden`) during modal mount prevents background disorientations.\n   - Accessible dismissal via Esc key, backdrop click, or dedicated close button.\n\n5. Visual Aesthetics (Xiaohongshu RED Style):\n   - Background: Soft warm grey/white (`#f7f8fa`).\n   - Cards: `bg-white`, `rounded-2xl`, subtle shadow (`shadow-sm hover:shadow-md`).\n   - Signature Red: Accent red `#ff2442` for active filter badges, like hearts, and primary CTAs.\n   - Spring micro-animations: CSS scale/bounce keyframes for heart tap feedback."
+}

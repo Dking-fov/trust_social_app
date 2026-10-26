@@ -24,6 +24,7 @@ from src.schemas.matching_schemas import (
     CrushApplicationRequest,
     CrushApplicationResponse,
 )
+from src.core.exceptions import AppBaseException, AppErrorCode
 from src.services.websocket_manager import ws_manager
 from src.services.points_service import PointsService
 
