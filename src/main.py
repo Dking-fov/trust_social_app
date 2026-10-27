@@ -68,10 +68,16 @@ if dist_path.exists() and (dist_path / "assets").exists():
 
 @app.get("/", tags=["Portal"])
 async def root_portal():
+    """Redirects root to interactive Swagger UI documentation /docs (Track 2 requirement)."""
+    return RedirectResponse(url="/docs", status_code=307)
+
+
+@app.get("/portal", tags=["Portal"])
+async def web_portal():
     """Serves the compiled React frontend Web App if available, otherwise redirects to Swagger."""
     if dist_path.exists() and (dist_path / "index.html").exists():
         return FileResponse(dist_path / "index.html")
-    return RedirectResponse(url="/docs")
+    return RedirectResponse(url="/docs", status_code=307)
 
 
 @app.get("/health", tags=["Health"])

@@ -797,5 +797,90 @@
       ]
     },
     "timestamp": "2026-10-27 09:16:29"
+  },
+  {
+    "id": "msg_1793064835870",
+    "type": "supervisor_reply",
+    "sender": "supervisor",
+    "target_agent": null,
+    "content": "✅ 3 名软件工程师已全部完成各自分配模块的代码编写，成功通过接口契约对齐并写入沙箱！提交初始 Git 快照，准备移交 2 名 QA 开展并发双轨自动化验证。",
+    "project_id": "trust_social_app",
+    "payload": {},
+    "timestamp": "2026-10-27 09:33:55"
+  },
+  {
+    "id": "msg_1793064835885",
+    "type": "command_directive",
+    "sender": "supervisor",
+    "target_agent": "tester_api",
+    "content": "【并发指令下发】执行第 #1 轮 pytest 业务集成与单元测试自动化矩阵。",
+    "project_id": "trust_social_app",
+    "payload": {
+      "round": 1
+    },
+    "timestamp": "2026-10-27 09:33:55"
+  },
+  {
+    "id": "msg_1793064835888",
+    "type": "command_directive",
+    "sender": "supervisor",
+    "target_agent": "tester_browser",
+    "content": "【并发指令下发】执行第 #1 轮 Playwright 真实无头 Chrome 浏览器点击与页面渲染验证。",
+    "project_id": "trust_social_app",
+    "payload": {
+      "round": 1
+    },
+    "timestamp": "2026-10-27 09:33:55"
+  },
+  {
+    "id": "msg_1793065818005",
+    "type": "supervisor_reply",
+    "sender": "supervisor",
+    "target_agent": null,
+    "content": "🎉 QA 双轨自动化验证全部通过！涵盖 API 集成测试与 Playwright 真实无头 Chrome 浏览器页面导航与交互点击测试，100% 通过无异常！测试报告已归档至 docs/TEST_REPORT.json。",
+    "project_id": "trust_social_app",
+    "payload": {
+      "total": 76,
+      "passed": 76,
+      "browser_scenarios": [
+        {
+          "scenario_name": "Browser Scenario 1: Root Portal & Redirection Verification",
+          "target_url": "http://127.0.0.1:63304/",
+          "actions_performed": [
+            "Navigate to root http://127.0.0.1:63304/",
+            "Landed on: http://127.0.0.1:63304/ with status 200"
+          ],
+          "passed": true,
+          "page_title": "小红书 - 热门人像摄影精选",
+          "screenshot_path": "/Users/chz/workspace/auto-agent/workspaces/trust_social_app/tests/screenshots/root_portal.png",
+          "error_message": null
+        },
+        {
+          "scenario_name": "Browser Scenario 2: Swagger UI Interactive Element Clicking",
+          "target_url": "http://127.0.0.1:63304/docs",
+          "actions_performed": [
+            "Navigate to Swagger Docs http://127.0.0.1:63304/docs",
+            "Verified .swagger-ui container mounted in DOM",
+            "Clicked on API operation block to expand details",
+            "Clicked 'Try it out' interactive button"
+          ],
+          "passed": true,
+          "page_title": "High-Trust Dating App - Swagger UI",
+          "screenshot_path": "/Users/chz/workspace/auto-agent/workspaces/trust_social_app/tests/screenshots/swagger_docs_click.png",
+          "error_message": null
+        }
+      ]
+    },
+    "timestamp": "2026-10-27 09:50:18"
+  },
+  {
+    "id": "msg_1793065818013",
+    "type": "command_directive",
+    "sender": "supervisor",
+    "target_agent": "reviewer",
+    "content": "【指令下发】请对已通过全部测试的软件进行端到端验收审查，核验 PRD 满足度并编制交付包。",
+    "project_id": "trust_social_app",
+    "payload": {},
+    "timestamp": "2026-10-27 09:50:18"
   }
 ]
