@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SoulRed 社交平台 - 瀑布流交互门户</title>
+  <style>
+    :root {
+      --primary-red: #ff2442;
+      --primary-red-hover: #e01b37;
+      --primary-red-light: #fff0f2;
+      --soul-purple: #7048e8;
+      --bg-color: #f7f8fa;
+      --card-bg: #ffffff;
+      --text-main: #333333;
+      --text-sub: #888888;
+      --text-muted: #bbbbbb;
+      --border-color: #f0f0f0;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.08);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    /* Top Navigation Bar */
+    header.app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-content {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary-red);
+      letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+
+    .brand-badge {
+      font-size: 11px;
+      background: linear-gradient(135deg, #ff2442, #7048e8);
+      color: white;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      background: #f0f2f5;
+      transition: all 0.2s;
+    }
+
+    .btn-link:hover {
+      background: #e4e7eb;
+      color: var(--primary-red);
+    }
+
+    .btn-docs {
+      background: var(--primary-red-light);
+      color: var(--primary-red);
+      border: 1px solid rgba(255, 36, 66, 0.2);
+    }
+
+    .btn-docs:hover {
+      background: var(--primary-red);
+      color: #fff;
+    }
+
+    /* Channel Tabs */
+    .tabs-wrapper {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      padding: 10px 16px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .channel-tab {
+      position: relative;
+      background: none;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      padding: 6px 4px;
+      transition: color 0.2s ease;
+    }
+
+    .channel-tab.active {
+      color: var(--text-main);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .channel-tab.active::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 3px;
+      background-color: var(--primary-red);
+      border-radius: 3px;
+    }
+
+    /* Main Container */
+    main.container {
+      max-width: 1080px;
+      margin: 16px auto;
+      padding: 0 12px;
+    }
+
+    /* Waterfall Grid */
+    .waterfall-container {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .waterfall-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Waterfall Card */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-cover-wrapper {
+      position: relative;
+      width: 100%;
+      background: #e9ecef;
+      overflow: hidden;
+    }
+
+    .card-cover {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .card-cover {
+      transform: scale(1.02);
+    }
+
+    .badge-multiple-images {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.55);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      backdrop-filter: blur(4px);
+    }
+
+    .badge-mood {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(255, 255, 255, 0.85);
+      color: #333;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 10px;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .card-body {
+      padding: 10px 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tag-pill {
+      font-size: 11px;
+      color: var(--soul-purple);
+      background: #f3f0ff;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 2px;
+    }
+
+    .author-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 65%;
+    }
+
+    .author-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #eee;
+    }
+
+    .author-name {
+      font-size: 12px;
+      color: var(--text-sub);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .like-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-sub);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px;
+      transition: color 0.15s ease, transform 0.15s ease;
+    }
+
+    .like-btn svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .like-btn.liked {
+      color: var(--primary-red);
+    }
+
+    .like-btn.liked svg {
+      fill: var(--primary-red);
+      stroke: var(--primary-red);
+      transform: scale(1.18);
+    }
+
+    /* Modal Detail View */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      max-width: 820px;
+      width: 100%;
+      max-height: 90vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .modal-gallery {
+      flex: 1.1;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      max-height: 90vh;
+    }
+
+    .modal-img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+
+    .modal-details {
+      flex: 1;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      max-height: 90vh;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(255,255,255,0.8);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #333;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+
+    .modal-close-btn:hover {
+      background: #fff;
+    }
+
+    .modal-header-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .modal-user-meta h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    .modal-user-meta p {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .modal-post-title {
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .modal-post-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #444;
+      white-space: pre-wrap;
+    }
+
+    /* Skeleton Placeholder */
+    .skeleton-card {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .skeleton-img {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.4s infinite;
+      border-radius: var(--radius-sm);
+    }
+
+    .skeleton-text {
+      height: 14px;
+      width: 80%;
+      background: #eee;
+      border-radius: 4px;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    @media (max-width: 680px) {
+      .modal-card {
+        flex-direction: column;
+        max-height: 95vh;
+      }
+      .modal-gallery {
+        max-height: 45vh;
+      }
+      .modal-details {
+        max-height: 50vh;
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <a href="/" class="brand-logo">
+        <span>SoulRed</span>
+        <span class="brand-badge">Dual-Stream Demo</span>
+      </a>
+      <div class="nav-actions">
+        <a href="/docs" target="_blank" class="btn-link btn-docs">Swagger API /docs</a>
+        <a href="/redoc" target="_blank" class="btn-link">Redoc</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Channel Navigation Tabs -->
+  <div class="tabs-wrapper">
+    <button class="channel-tab active" data-channel="recommend" onclick="switchChannel('recommend')">推荐</button>
+    <button class="channel-tab" data-channel="nearby" onclick="switchChannel('nearby')">附近</button>
+    <button class="channel-tab" data-channel="following" onclick="switchChannel('following')">关注</button>
+  </div>
+
+  <!-- Waterfall Main Container -->
+  <main class="container">
+    <div id="waterfall" class="waterfall-container">
+      <div class="waterfall-column" id="col-left"></div>
+      <div class="waterfall-column" id="col-right"></div>
+    </div>
+  </main>
+
+  <!-- Modal Detail Viewer -->
+  <div id="detailModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+      <div class="modal-gallery">
+        <img id="modalCover" class="modal-img" src="" alt="封面图" />
+      </div>
+      <div class="modal-details">
+        <div class="modal-header-user">
+          <img id="modalAvatar" class="modal-avatar" src="" alt="作者" />
+          <div class="modal-user-meta">
+            <h4 id="modalAuthor"></h4>
+            <p id="modalPostTime">刚刚</p>
+          </div>
+        </div>
+        <h3 id="modalTitle" class="modal-post-title"></h3>
+        <p id="modalContent" class="modal-post-content"></p>
+        <div id="modalTags" class="card-tags"></div>
+        <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+          <button id="modalLikeBtn" class="like-btn" style="font-size: 14px;">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <span id="modalLikeCount">0</span> 喜欢
+          </button>
+          <span style="font-size: 12px; color: var(--soul-purple); font-weight: 600;">#SoulRed 灵感碰撞</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * SoulRed Dual-Column Adaptive Waterfall Engine (Vanilla JS)
+     */
+    let currentChannel = "recommend";
+    let postItems = [];
+    let colHeights = [0, 0]; // [left, right]
+
+    // Fallback Mock Data for demo and test guarantees
+    const MOCK_WATERFALL_DATA = [
+      {
+        id: "demo-post-1",
+        title: "周末雨天一个人在咖啡馆听民谣live 🌧️☕",
+        content: "今天上海下起小雨，躲进巨鹿路的一家日系手冲咖啡馆。点了一杯耶加雪菲水洗，耳机里放着安溥和陈绮贞，治愈了一整个礼拜的班味。",
+        cover_image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop&q=80",
+        images_count: 4,
+        aspect_ratio: 1.333, // 3:4 portrait
+        author: {
+          id: "u-101",
+          nickname: "林深时见鹿",
+          avatar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+          verified: true
+        },
+        tags: ["周末去哪儿", "民谣livehouse", "治愈系"],
+        mood_tag: "治愈中",
+        like_count: 328,
+        is_liked: false
+      },
+      {
+        id: "demo-post-2",
+        title: "Soul 契合度 96% 的双向奔赴记录 ✨",
+        content: "在上个月灵魂雷达配对认识，发现我们同是 INFP、都在玩胶片摄影、连喜欢的宝藏乐队都一模一样！终于在线下奔现了，是真正的灵魂共振。",
+        cover_image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80",
+        images_count: 3,
+        aspect_ratio: 1.0, // 1:1 square
+        author: {
+          id: "u-102",
+          nickname: "星野与猫",
+          avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+          verified: true
+        },
+        tags: ["INFP", "双向奔赴", "灵魂伴侣"],
+        mood_tag: "心动",
+        like_count: 1420,
+        is_liked: true
+      },
+      {
+        id: "demo-post-3",
+        title: "西岸艺术展：在装置艺术前寻找内心的平静",
+        content: "展厅巨大的光影装置投射在纯白墙面上，极简的线条与流动色彩交织。放空自己两个小时，所有的焦虑在这个瞬间消散殆尽。",
+        cover_image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&auto=format&fit=crop&q=80",
+        images_count: 6,
+        aspect_ratio: 1.45,
+        author: {
+          id: "u-103",
+          nickname: "Kora 艺术漫步",
+          avatar_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
+          verified: false
+        },
+        tags: ["西岸美术馆", "当代艺术", "看展日常"],
+        mood_tag: "发呆",
+        like_count: 512,
+        is_liked: false
+      },
+      {
+        id: "demo-post-4",
+        title: "青藤每日精选推荐：交大校友，程序员与吉他手",
+        content: "平时写 Python 和 Rust，闲暇时喜欢弹 Fingerstyle。希望在这里遇到同样认真生活、热爱音乐和户外徒步的女生。",
+        cover_image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80",
+        images_count: 1,
+        aspect_ratio: 0.85,
+        author: {
+          id: "u-104",
+          nickname: "Echo 弦上",
+          avatar_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
+          verified: true
+        },
+        tags: ["青藤之恋", "吉他指弹", "名校交友"],
+        mood_tag: "求聊天",
+        like_count: 98,
+        is_liked: false
+      },
+      {
+        id: "demo-post-5",
+        title: "秋天的第一场露营 🏕️ 篝火、热红酒与星空",
+        content: "避开人潮扎营在湖畔，生起篝火煮一锅肉桂香气扑鼻的热红酒。深夜大家围坐在一起看猎户座升起，这才是生活本该有的模样。",
+        cover_image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&auto=format&fit=crop&q=80",
+        images_count: 5,
+        aspect_ratio: 1.25,
+        author: {
+          id: "u-105",
+          nickname: "山野行者",
+          avatar_url: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+          verified: false
+        },
+        tags: ["户外露营", "秋日浪漫", "围炉煮茶"],
+        mood_tag: "微醺",
+        like_count: 876,
+        is_liked: false
+      },
+      {
+        id: "demo-post-6",
+        title: "深夜树洞：那些说不出口的温柔与孤独 🌙",
+        content: "大城市里每个人都像一颗孤独运转的行星。戴上耳机，在末班地铁上看着窗外倒退的灯火，其实我们都在渴望着被真诚倾听与看见。",
+        cover_image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80",
+        images_count: 2,
+        aspect_ratio: 1.35,
+        author: {
+          id: "u-106",
+          nickname: "月升之国",
+          avatar_url: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80",
+          verified: false
+        },
+        tags: ["深夜树洞", "情感共鸣", "都市孤独"],
+        mood_tag: "emo中",
+        like_count: 2190,
+        is_liked: true
+      }
+    ];
+
+    /**
+     * Switch Channel Tab (recommend, nearby, following)
+     */
+    function switchChannel(channel) {
+      currentChannel = channel;
+      document.querySelectorAll(".channel-tab").forEach(tab => {
+        if (tab.dataset.channel === channel) {
+          tab.classList.add("active");
+        } else {
+          tab.classList.remove("active");
+        }
+      });
+      loadFeedData(channel);
+    }
+
+    /**
+     * Toggle Card Like interaction
+     */
+    function toggleCardLike(postId, event) {
+      if (event) {
+        event.stopPropagation();
+      }
+      const item = postItems.find(p => p.id === postId);
+      if (!item) return;
+
+      item.is_liked = !item.is_liked;
+      item.like_count += item.is_liked ? 1 : -1;
+
+      // Update UI elements for this card
+      const btn = document.getElementById(`like-btn-${postId}`);
+      const countSpan = document.getElementById(`like-count-${postId}`);
+      if (btn && countSpan) {
+        if (item.is_liked) {
+          btn.classList.add("liked");
+        } else {
+          btn.classList.remove("liked");
+        }
+        countSpan.textContent = item.like_count;
+      }
+
+      // Sync backend API asynchronously if available
+      try {
+        fetch(`/api/v1/posts/${postId}/like`, { method: "POST" }).catch(() => {});
+      } catch (e) {}
+    }
+
+    /**
+     * Render items into the adaptive dual-column waterfall
+     */
+    function renderWaterfallCards(items) {
+      const colLeft = document.getElementById("col-left");
+      const colRight = document.getElementById("col-right");
+      if (!colLeft || !colRight) return;
+
+      colLeft.innerHTML = "";
+      colRight.innerHTML = "";
+      colHeights = [0, 0];
+
+      items.forEach(item => {
+        const cardEl = createCardElement(item);
+        // Estimate height based on aspect ratio
+        const estimatedCardHeight = 200 * (item.aspect_ratio || 1.2) + 80;
+
+        if (colHeights[0] <= colHeights[1]) {
+          colLeft.appendChild(cardEl);
+          colHeights[0] += estimatedCardHeight;
+        } else {
+          colRight.appendChild(cardEl);
+          colHeights[1] += estimatedCardHeight;
+        }
+      });
+    }
+
+    /**
+     * Create single Waterfall Card DOM element
+     */
+    function createCardElement(item) {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.id = `card-${item.id}`;
+      card.onclick = () => openModal(item);
+
+      const coverWrapper = document.createElement("div");
+      coverWrapper.className = "card-cover-wrapper";
+      const heightPadding = Math.round((item.aspect_ratio || 1.2) * 100);
+      coverWrapper.style.paddingBottom = `${Math.min(Math.max(heightPadding, 80), 160)}%`;
+
+      const img = document.createElement("img");
+      img.className = "card-cover";
+      img.src = item.cover_image;
+      img.alt = item.title;
+      img.loading = "lazy";
+      img.style.position = "absolute";
+      img.style.top = "0";
+      img.style.left = "0";
+      coverWrapper.appendChild(img);
+
+      if (item.images_count > 1) {
+        const badge = document.createElement("div");
+        badge.className = "badge-multiple-images";
+        badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg> 1/${item.images_count}`;
+        coverWrapper.appendChild(badge);
+      }
+
+      if (item.mood_tag) {
+        const mood = document.createElement("div");
+        mood.className = "badge-mood";
+        mood.textContent = item.mood_tag;
+        coverWrapper.appendChild(mood);
+      }
+
+      card.appendChild(coverWrapper);
+
+      const body = document.createElement("div");
+      body.className = "card-body";
+
+      const title = document.createElement("h3");
+      title.className = "card-title";
+      title.textContent = item.title;
+      body.appendChild(title);
+
+      if (item.tags && item.tags.length > 0) {
+        const tagsContainer = document.createElement("div");
+        tagsContainer.className = "card-tags";
+        item.tags.slice(0, 3).forEach(tag => {
+          const pill = document.createElement("span");
+          pill.className = "tag-pill";
+          pill.textContent = `#${tag}`;
+          tagsContainer.appendChild(pill);
+        });
+        body.appendChild(tagsContainer);
+      }
+
+      const footer = document.createElement("div");
+      footer.className = "card-footer";
+
+      const authorDiv = document.createElement("div");
+      authorDiv.className = "author-info";
+      const avatar = document.createElement("img");
+      avatar.className = "author-avatar";
+      avatar.src = (item.author && item.author.avatar_url) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50";
+      avatar.alt = (item.author && item.author.nickname) || "用户";
+
+      const authorName = document.createElement("span");
+      authorName.className = "author-name";
+      authorName.textContent = (item.author && item.author.nickname) || "神秘网友";
+      authorDiv.appendChild(avatar);
+      authorDiv.appendChild(authorName);
+      footer.appendChild(authorDiv);
+
+      const likeBtn = document.createElement("button");
+      likeBtn.id = `like-btn-${item.id}`;
+      likeBtn.className = `like-btn ${item.is_liked ? "liked" : ""}`;
+      likeBtn.onclick = (e) => toggleCardLike(item.id, e);
+      likeBtn.innerHTML = `
+        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span id="like-count-${item.id}">${item.like_count}</span>
+      `;
+      footer.appendChild(likeBtn);
+
+      body.appendChild(footer);
+      card.appendChild(body);
+
+      return card;
+    }
+
+    /**
+     * Load Demo Data for offline / initial state
+     */
+    function loadDemoData() {
+      postItems = JSON.parse(JSON.stringify(MOCK_WATERFALL_DATA));
+      renderWaterfallCards(postItems);
+    }
+
+    /**
+     * Load Feed Data from backend or fallback to demo
+     */
+    async function loadFeedData(channel = "recommend") {
+      try {
+        const resp = await fetch(`/api/v1/feed?channel=${channel}&page=1&page_size=20`);
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data && data.items && data.items.length > 0) {
+            postItems = data.items;
+            renderWaterfallCards(postItems);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn("Backend API unavailable, falling back to rich demo dataset:", err);
+      }
+      loadDemoData();
+    }
+
+    /**
+     * Modal detail view actions
+     */
+    function openModal(item) {
+      document.getElementById("modalCover").src = item.cover_image;
+      document.getElementById("modalAvatar").src = (item.author && item.author.avatar_url) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50";
+      document.getElementById("modalAuthor").textContent = (item.author && item.author.nickname) || "神秘网友";
+      document.getElementById("modalTitle").textContent = item.title;
+      document.getElementById("modalContent").textContent = item.content || item.title;
+      document.getElementById("modalLikeCount").textContent = item.like_count;
+
+      const modalLikeBtn = document.getElementById("modalLikeBtn");
+      modalLikeBtn.className = `like-btn ${item.is_liked ? "liked" : ""}`;
+      modalLikeBtn.onclick = (e) => {
+        toggleCardLike(item.id, e);
+        document.getElementById("modalLikeCount").textContent = item.like_count;
+        if (item.is_liked) {
+          modalLikeBtn.classList.add("liked");
+        } else {
+          modalLikeBtn.classList.remove("liked");
+        }
+      };
+
+      const tagsContainer = document.getElementById("modalTags");
+      tagsContainer.innerHTML = "";
+      if (item.tags) {
+        item.tags.forEach(t => {
+          const pill = document.createElement("span");
+          pill.className = "tag-pill";
+          pill.textContent = `#${t}`;
+          tagsContainer.appendChild(pill);
+        });
+      }
+
+      document.getElementById("detailModal").classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("detailModal").classList.remove("active");
+    }
+
+    function closeModalOnOverlay(e) {
+      if (e.target.id === "detailModal") {
+        closeModal();
+      }
+    }
+
+    // Expose functions globally for testability and browser interaction
+    window.renderWaterfallCards = renderWaterfallCards;
+    window.switchChannel = switchChannel;
+    window.toggleCardLike = toggleCardLike;
+    window.loadDemoData = loadDemoData;
+    window.closeModal = closeModal;
+
+    // Auto-init on page ready
+    document.addEventListener("DOMContentLoaded", () => {
+      loadFeedData("recommend");
+    });
+  </script>
+</body>
+</html>

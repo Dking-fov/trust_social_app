@@ -1,274 +1,615 @@
 {
-  "project_name": "xiaohongshu-portrait-feed",
+  "project_name": "soulred-social-platform",
   "tech_stack": {
-    "build_tool": "Vite 5",
-    "framework": "React 18 / TypeScript",
-    "icons": "Lucide React",
-    "language": "TypeScript 5",
-    "state_and_storage": "React Hooks + Browser LocalStorage",
-    "styling": "Tailwind CSS 3",
-    "testing": "Vitest + React Testing Library + jsdom"
+    "cryptography": "Cryptography (AES-256-GCM) + Passlib (bcrypt) + PyJWT",
+    "database": "SQLAlchemy 2.0+ (SQLite in-memory for testing, PostgreSQL ready)",
+    "framework": "FastAPI 0.115+ (ASGI, Starlette)",
+    "frontend_portal": "HTML5 / CSS3 Responsive Dual-Column Waterfall (Native Vanilla JS, zero bundle build required)",
+    "language": "Python 3.12",
+    "realtime": "Starlette WebSocket + ConnectionManager with Heartbeat & Backoff",
+    "testing": "pytest 8.3+, pytest-asyncio, httpx (TestClient)",
+    "validation": "Pydantic v2 + Pydantic-Settings"
   },
   "dependencies": [
-    "react@^18.3.1",
-    "react-dom@^18.3.1",
-    "lucide-react@^0.453.0",
-    "clsx@^2.1.1",
-    "tailwind-merge@^2.5.4",
-    "vite@^5.4.9",
-    "typescript@^5.6.3",
-    "@types/react@^18.3.11",
-    "@types/react-dom@^18.3.1",
-    "tailwindcss@^3.4.14",
-    "postcss@^8.4.47",
-    "autoprefixer@^10.4.20",
-    "vitest@^2.1.3",
-    "@testing-library/react@^16.0.1",
-    "@testing-library/jest-dom@^6.6.2",
-    "jsdom@^25.0.1"
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.8.0",
+    "pydantic-settings>=2.4.0",
+    "sqlalchemy>=2.0.30",
+    "passlib[bcrypt]>=1.7.4",
+    "pyjwt>=2.9.0",
+    "cryptography>=43.0.0",
+    "python-multipart>=0.0.9",
+    "httpx>=0.27.0",
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "websockets>=12.0"
   ],
-  "file_tree": [
+  "modules": [
     {
-      "path": "package.json",
-      "purpose": "Project manifest declaring dependencies, scripts (dev, build, test), and project metadata",
-      "key_symbols": [
-        "package.json"
+      "module_id": "mod_data_model",
+      "module_name": "数据模型、持久化与加密配置层 (Data Models & Persistence)",
+      "description": "负责系统核心数据模型设计、SQLAlchemy ORM 映射、Pydantic 请求/响应契约校验、AES-256 隐私信息加解密、JWT/密码安全工具以及全局配置管理。",
+      "files": [
+        "requirements.txt",
+        "soulred/__init__.py",
+        "soulred/config.py",
+        "soulred/database.py",
+        "soulred/utils/__init__.py",
+        "soulred/utils/crypto.py",
+        "soulred/models/__init__.py",
+        "soulred/models/base.py",
+        "soulred/models/user.py",
+        "soulred/models/post.py",
+        "soulred/models/match.py",
+        "soulred/models/chat.py",
+        "soulred/models/circle.py",
+        "soulred/schemas/__init__.py",
+        "soulred/schemas/user.py",
+        "soulred/schemas/post.py",
+        "soulred/schemas/match.py",
+        "soulred/schemas/chat.py",
+        "soulred/schemas/circle.py"
+      ],
+      "dependencies": []
+    },
+    {
+      "module_id": "mod_business_logic",
+      "module_name": "核心领域服务、算法与业务状态机 (Core Domain Services & Algorithms)",
+      "description": "实现小红书风格双列自适应瀑布流生成与多频道推荐引擎、Soul 风格灵魂雷达与青藤每日精选匹配算法、即时通讯亲密度点亮状态机、智能破冰话术生成、多层级楼中楼评论树、以及 AI 文本/图文风控过滤。包含算法核心单元测试。",
+      "files": [
+        "soulred/services/__init__.py",
+        "soulred/services/safety_service.py",
+        "soulred/services/auth_service.py",
+        "soulred/services/post_service.py",
+        "soulred/services/feed_service.py",
+        "soulred/services/matching_service.py",
+        "soulred/services/chat_service.py",
+        "soulred/services/circle_service.py",
+        "tests/test_services.py"
+      ],
+      "dependencies": [
+        "mod_data_model"
       ]
     },
     {
-      "path": "tsconfig.json",
-      "purpose": "TypeScript compiler configuration with strict typing, JSX settings, and path aliases",
-      "key_symbols": [
-        "tsconfig.json"
-      ]
-    },
-    {
-      "path": "vite.config.ts",
-      "purpose": "Vite build configuration including React plugin and test runner setup",
-      "key_symbols": [
-        "vite.config.ts"
-      ]
-    },
-    {
-      "path": "tailwind.config.js",
-      "purpose": "Tailwind CSS design token configuration (Xiaohongshu red colors, border radiuses, animations)",
-      "key_symbols": [
-        "tailwind.config.js"
-      ]
-    },
-    {
-      "path": "postcss.config.js",
-      "purpose": "PostCSS configuration for Tailwind and Autoprefixer",
-      "key_symbols": [
-        "postcss.config.js"
-      ]
-    },
-    {
-      "path": "index.html",
-      "purpose": "HTML entry point with viewport meta, font links, and root mount node",
-      "key_symbols": [
-        "index.html"
-      ]
-    },
-    {
-      "path": "src/types/portrait.ts",
-      "purpose": "TypeScript interface and type definitions for portraits, authors, categories, tags, and states",
-      "key_symbols": [
-        "PortraitItem",
-        "Creator",
-        "CategoryTag",
-        "SortOption",
-        "FilterCriteria",
-        "UserLikeRecord"
-      ]
-    },
-    {
-      "path": "src/constants/tags.ts",
-      "purpose": "Constant definitions for photography category tabs, tags, and sort dropdown options",
-      "key_symbols": [
-        "DEFAULT_CATEGORIES",
-        "CATEGORY_TAG_MAP",
-        "SORT_OPTIONS"
-      ]
-    },
-    {
-      "path": "src/data/mockPortraits.ts",
-      "purpose": "Curated high-resolution trending portrait mock dataset with diverse aspect ratios, creators, and tags",
-      "key_symbols": [
-        "MOCK_PORTRAITS",
-        "generateRandomPortraits"
-      ]
-    },
-    {
-      "path": "src/services/portraitService.ts",
-      "purpose": "Service layer handling search, tag filtering, sorting, and paginated loading of portraits",
-      "key_symbols": [
-        "getFilteredPortraits",
-        "getPortraitById",
-        "fetchPortraitBatch"
-      ]
-    },
-    {
-      "path": "src/services/storageService.ts",
-      "purpose": "LocalStorage persistence service for tracking liked posts and custom favorites",
-      "key_symbols": [
-        "getLikedPostIds",
-        "togglePostLike",
-        "isPostLiked"
-      ]
-    },
-    {
-      "path": "src/hooks/usePortraits.ts",
-      "purpose": "Custom hook managing feed state, search queries, active tags, sorting, and infinite scroll batching",
-      "key_symbols": [
-        "usePortraits"
-      ]
-    },
-    {
-      "path": "src/hooks/useLikes.ts",
-      "purpose": "Custom hook for optimistic like toggle, animated bounce state, and storage synchronization",
-      "key_symbols": [
-        "useLikes"
-      ]
-    },
-    {
-      "path": "src/hooks/useMasonryColumns.ts",
-      "purpose": "Custom hook calculating responsive column counts and balancing items across columns by height",
-      "key_symbols": [
-        "useMasonryColumns"
-      ]
-    },
-    {
-      "path": "src/components/Common/ImageWithFallback.tsx",
-      "purpose": "Resilient image component with skeleton shimmer, lazy loading, aspect ratio box, and error fallback",
-      "key_symbols": [
-        "ImageWithFallback"
-      ]
-    },
-    {
-      "path": "src/components/Common/EmptyState.tsx",
-      "purpose": "Friendly empty state view when search or filter returns no matching portrait notes",
-      "key_symbols": [
-        "EmptyState"
-      ]
-    },
-    {
-      "path": "src/components/Common/InfiniteScrollTrigger.tsx",
-      "purpose": "Bottom sentinel component utilizing IntersectionObserver to trigger loading the next page of cards",
-      "key_symbols": [
-        "InfiniteScrollTrigger"
-      ]
-    },
-    {
-      "path": "src/components/Header/Navbar.tsx",
-      "purpose": "Top header bar containing RED logo, search input bar, and hot/latest sort dropdown selector",
-      "key_symbols": [
-        "Navbar"
-      ]
-    },
-    {
-      "path": "src/components/Filter/TagFilterBar.tsx",
-      "purpose": "Horizontally scrollable trending category filter bar with Xiaohongshu red pill active highlights",
-      "key_symbols": [
-        "TagFilterBar"
-      ]
-    },
-    {
-      "path": "src/components/Waterfall/PortraitCard.tsx",
-      "purpose": "Masonry card component with portrait cover, aspect-ratio placeholder, title, author info, and like button",
-      "key_symbols": [
-        "PortraitCard"
-      ]
-    },
-    {
-      "path": "src/components/Waterfall/CardSkeleton.tsx",
-      "purpose": "Shimmering placeholder card shown while portraits are loading",
-      "key_symbols": [
-        "CardSkeleton"
-      ]
-    },
-    {
-      "path": "src/components/Waterfall/WaterfallGrid.tsx",
-      "purpose": "Responsive masonry grid container rendering multi-column unbalanced portrait flow",
-      "key_symbols": [
-        "WaterfallGrid"
-      ]
-    },
-    {
-      "path": "src/components/Modal/PortraitDetailModal.tsx",
-      "purpose": "Full-screen/split lightbox modal showing high-res photo, author notes, tags, like action, and body scroll lock",
-      "key_symbols": [
-        "PortraitDetailModal"
-      ]
-    },
-    {
-      "path": "src/App.tsx",
-      "purpose": "Root application component integrating Navbar, TagFilterBar, WaterfallGrid, DetailModal, and status toast",
-      "key_symbols": [
-        "App"
-      ]
-    },
-    {
-      "path": "src/main.tsx",
-      "purpose": "React application entrypoint rendering App into the DOM root with global styles",
-      "key_symbols": [
-        "main"
-      ]
-    },
-    {
-      "path": "tests/services/portraitService.test.ts",
-      "purpose": "Unit tests for portrait querying, searching, filtering, and sorting algorithms",
-      "key_symbols": [
-        "describe",
-        "test",
-        "expect"
-      ]
-    },
-    {
-      "path": "tests/services/storageService.test.ts",
-      "purpose": "Unit tests for LocalStorage like persistence and fault tolerance",
-      "key_symbols": [
-        "describe",
-        "test",
-        "expect"
-      ]
-    },
-    {
-      "path": "tests/hooks/useMasonryColumns.test.ts",
-      "purpose": "Unit tests for responsive column split and height balancing logic",
-      "key_symbols": [
-        "describe",
-        "test",
-        "expect"
-      ]
-    },
-    {
-      "path": "tests/hooks/useLikes.test.ts",
-      "purpose": "Unit tests for like toggle, count increment/decrement, and optimistic updates",
-      "key_symbols": [
-        "describe",
-        "test",
-        "expect"
-      ]
-    },
-    {
-      "path": "tests/components/PortraitCard.test.tsx",
-      "purpose": "Component tests for card rendering, like interaction, and image error fallback",
-      "key_symbols": [
-        "describe",
-        "test",
-        "expect"
-      ]
-    },
-    {
-      "path": "tests/components/PortraitDetailModal.test.tsx",
-      "purpose": "Component tests for modal visibility, keyboard Esc dismiss, and scroll lock",
-      "key_symbols": [
-        "describe",
-        "test",
-        "expect"
+      "module_id": "mod_api_gateway",
+      "module_name": "Web API 路由、WebSocket 通讯与交互网关 (Web APIs & Realtime Gateway)",
+      "description": "提供遵循 RESTful 规范的 FastAPI API 路由控制层、支持心跳重连与离线补偿的 WebSocket 实时私信长连接网关、基于虚拟瀑布流卡片视觉呈现的前端交互 Demo Portal，以及全套 API 与 WebSocket 自动化集成测试套件。",
+      "files": [
+        "soulred/api/__init__.py",
+        "soulred/api/deps.py",
+        "soulred/api/v1/__init__.py",
+        "soulred/api/v1/auth.py",
+        "soulred/api/v1/users.py",
+        "soulred/api/v1/posts.py",
+        "soulred/api/v1/feed.py",
+        "soulred/api/v1/matching.py",
+        "soulred/api/v1/chat.py",
+        "soulred/api/v1/circles.py",
+        "soulred/api/ws_chat.py",
+        "soulred/static/index.html",
+        "soulred/main.py",
+        "tests/__init__.py",
+        "tests/conftest.py",
+        "tests/test_models.py",
+        "tests/test_api_endpoints.py",
+        "tests/test_websocket.py"
+      ],
+      "dependencies": [
+        "mod_data_model",
+        "mod_business_logic"
       ]
     }
   ],
-  "design_notes": "Architectural Design Principles, Modularity & Integration Strategy:\n\n1. System Decomposition & Single Responsibility Principle (SRP):\n   - The application is decoupled into clean, distinct layers:\n     * Data & Domain Layer (`src/types`, `src/data`, `src/services`): Handles data structures, mock data feeds, filtering, sorting, pagination, and LocalStorage persistence.\n     * State Management & Hook Layer (`src/hooks`): Provides isolated business logic hooks (`usePortraits`, `useLikes`, `useMasonryColumns`) that can be tested independently of UI rendering.\n     * Presentation Component Layer (`src/components`): Organized into modular domains (`Header`, `Filter`, `Waterfall`, `Modal`, `Common`).\n\n2. Responsive Masonry (Waterfall) Layout Engine:\n   - Dynamic Multi-Column Distribution: Rather than relying solely on pure CSS columns (which render top-to-bottom and break ordering across columns), `useMasonryColumns` dynamically splits posts into 2 columns (<768px), 3 columns (768px-1200px), or 4-5 columns (>1200px).\n   - CLS Prevention (CLS < 0.1): Card aspect ratios are tracked and predefined; `ImageWithFallback` reserves container height with aspect-ratio CSS and renders skeleton shimmer placeholders until image load finishes.\n\n3. Performance & 60fps Scrolling:\n   - Native `loading=\"lazy\"` and `IntersectionObserver` sentinel triggers for infinite scroll batches.\n   - Debounced search queries and throttled scroll triggers prevent excessive state re-computations.\n   - Optimistic updates for engagement interactions (like/favorite) update the UI instantaneously, syncing to LocalStorage in the background.\n\n4. Interactive Detail Lightbox & Modal Experience:\n   - Full-bleed or split-pane modal view on desktop and drawer-style sheet on mobile.\n   - Body scroll locking (`overflow: hidden`) during modal mount prevents background disorientations.\n   - Accessible dismissal via Esc key, backdrop click, or dedicated close button.\n\n5. Visual Aesthetics (Xiaohongshu RED Style):\n   - Background: Soft warm grey/white (`#f7f8fa`).\n   - Cards: `bg-white`, `rounded-2xl`, subtle shadow (`shadow-sm hover:shadow-md`).\n   - Signature Red: Accent red `#ff2442` for active filter badges, like hearts, and primary CTAs.\n   - Spring micro-animations: CSS scale/bounce keyframes for heart tap feedback."
+  "file_tree": [
+    {
+      "path": "requirements.txt",
+      "purpose": "项目依赖声明文件，涵盖 Web、数据库、安全加解密、WebSocket 及自动化测试套件",
+      "key_symbols": [
+        "fastapi",
+        "uvicorn",
+        "sqlalchemy",
+        "pydantic",
+        "pydantic-settings",
+        "passlib",
+        "pyjwt",
+        "cryptography",
+        "httpx",
+        "pytest",
+        "pytest-asyncio",
+        "websockets"
+      ]
+    },
+    {
+      "path": "soulred/__init__.py",
+      "purpose": "SoulRed 平台核心包初始化及版本号声明",
+      "key_symbols": [
+        "__version__"
+      ]
+    },
+    {
+      "path": "soulred/config.py",
+      "purpose": "基于 Pydantic-Settings 的全局配置管理，包括数据库连接串、JWT 密钥、AES 密钥及服务端口配置",
+      "key_symbols": [
+        "Settings",
+        "get_settings"
+      ]
+    },
+    {
+      "path": "soulred/database.py",
+      "purpose": "SQLAlchemy 数据库引擎、连接会话工厂、声明基类及初始化表结构入口",
+      "key_symbols": [
+        "engine",
+        "SessionLocal",
+        "Base",
+        "get_db",
+        "init_db"
+      ]
+    },
+    {
+      "path": "soulred/utils/__init__.py",
+      "purpose": "工具类模块初始化",
+      "key_symbols": []
+    },
+    {
+      "path": "soulred/utils/crypto.py",
+      "purpose": "AES-256-GCM 敏感数据加解密工具、bcrypt 密码哈希与 JWT 身份凭证生成校验工具",
+      "key_symbols": [
+        "encrypt_field",
+        "decrypt_field",
+        "hash_password",
+        "verify_password",
+        "create_access_token",
+        "decode_access_token"
+      ]
+    },
+    {
+      "path": "soulred/models/__init__.py",
+      "purpose": "导出所有 SQLAlchemy ORM 模型以供持久化与数据库表自动迁移注册",
+      "key_symbols": [
+        "Base",
+        "User",
+        "UserProfile",
+        "VerificationBadge",
+        "PrivacySetting",
+        "Post",
+        "PostImage",
+        "PostLike",
+        "PostDraft",
+        "PersonalityQuizResult",
+        "DailyRecommendation",
+        "CrushMatch",
+        "ChatConversation",
+        "ChatMessage",
+        "IntimacyRecord",
+        "InterestCircle",
+        "CircleMember",
+        "CircleComment"
+      ]
+    },
+    {
+      "path": "soulred/models/base.py",
+      "purpose": "通用模型基类，提供 UUID 主键、创建/更新时间戳及软删除支持",
+      "key_symbols": [
+        "TimestampMixin",
+        "UUIDPrimaryKeyMixin",
+        "SoftDeleteMixin"
+      ]
+    },
+    {
+      "path": "soulred/models/user.py",
+      "purpose": "用户主账号、个性化社交主页档案（3D虚拟形象/语音名片/MBTI）、青藤式学历/职业认证徽章与隐私配置数据模型",
+      "key_symbols": [
+        "User",
+        "UserProfile",
+        "VerificationBadge",
+        "PrivacySetting",
+        "VerificationStatusEnum",
+        "GenderEnum"
+      ]
+    },
+    {
+      "path": "soulred/models/post.py",
+      "purpose": "小红书风格动态帖子、自适应多图卡片元数据（1:1/3:4/4:3）、点赞记录及草稿暂存模型",
+      "key_symbols": [
+        "Post",
+        "PostImage",
+        "PostLike",
+        "PostDraft",
+        "AspectRatioEnum",
+        "PostStatusEnum",
+        "MoodTagEnum"
+      ]
+    },
+    {
+      "path": "soulred/models/match.py",
+      "purpose": "个性/价值观测试答卷星盘、青藤风格每日精选卡片推送记录及双向奔赴心动互选模型",
+      "key_symbols": [
+        "PersonalityQuizResult",
+        "DailyRecommendation",
+        "CrushMatch",
+        "CrushStatusEnum"
+      ]
+    },
+    {
+      "path": "soulred/models/chat.py",
+      "purpose": "即时通讯会话、私信消息体（文本/表情/语音/图片/已读/撤回）与亲密度点亮经验值模型",
+      "key_symbols": [
+        "ChatConversation",
+        "ChatMessage",
+        "IntimacyRecord",
+        "MessageTypeEnum",
+        "IntimacyLevelEnum"
+      ]
+    },
+    {
+      "path": "soulred/models/circle.py",
+      "purpose": "兴趣圈子社群、成员归属关系以及多层级楼中楼互动评论树模型",
+      "key_symbols": [
+        "InterestCircle",
+        "CircleMember",
+        "CircleComment",
+        "CircleRoleEnum",
+        "CircleCategoryEnum"
+      ]
+    },
+    {
+      "path": "soulred/schemas/__init__.py",
+      "purpose": "统一导出系统各模块 Pydantic 请求与响应契约 Schema",
+      "key_symbols": [
+        "UserCreate",
+        "UserLogin",
+        "UserProfileResponse",
+        "PostCreate",
+        "PostWaterfallCard",
+        "PostDetailResponse",
+        "QuizSubmitSchema",
+        "DailyCardResponse",
+        "MessageSendSchema",
+        "MessageResponse",
+        "CircleResponse",
+        "CommentResponse"
+      ]
+    },
+    {
+      "path": "soulred/schemas/user.py",
+      "purpose": "用户注册、登录凭证、社交档案更新、隐私中心设置与官方实名/学历认证 Pydantic 校验模型",
+      "key_symbols": [
+        "UserCreate",
+        "UserLogin",
+        "TokenResponse",
+        "UserProfileUpdate",
+        "UserProfileResponse",
+        "PrivacySettingSchema",
+        "VerificationSubmitSchema"
+      ]
+    },
+    {
+      "path": "soulred/schemas/post.py",
+      "purpose": "小红书双列瀑布流卡片响应体、动态图文发布、本地草稿暂存及点赞交互 Pydantic 校验模型",
+      "key_symbols": [
+        "PostCreate",
+        "PostImageSchema",
+        "PostWaterfallCard",
+        "PostDetailResponse",
+        "PostDraftSave",
+        "PostLikeToggleResponse"
+      ]
+    },
+    {
+      "path": "soulred/schemas/match.py",
+      "purpose": "灵魂测试提交、Soul 雷达匹配卡片（相似度>80%）、每日推荐卡片与双向奔赴心动操作 Pydantic 校验模型",
+      "key_symbols": [
+        "QuizSubmitSchema",
+        "QuizResultResponse",
+        "SoulRadarMatchCard",
+        "DailyCardResponse",
+        "CrushActionRequest",
+        "CrushActionResponse"
+      ]
+    },
+    {
+      "path": "soulred/schemas/chat.py",
+      "purpose": "WebSocket/REST 实时消息收发、智能破冰话术推荐、亲密度等级进展与消息撤回 Pydantic 校验模型",
+      "key_symbols": [
+        "MessageSendSchema",
+        "MessageResponse",
+        "ConversationSummaryResponse",
+        "IcebreakerResponse",
+        "IntimacyStatusResponse",
+        "MessageRecallRequest"
+      ]
+    },
+    {
+      "path": "soulred/schemas/circle.py",
+      "purpose": "兴趣圈子创建、圈子详情、多层级树状评论及内容风控审核 Pydantic 校验模型",
+      "key_symbols": [
+        "CircleCreateSchema",
+        "CircleResponse",
+        "CommentCreateSchema",
+        "CommentResponse",
+        "CommentTreeResponse",
+        "ModerationActionSchema"
+      ]
+    },
+    {
+      "path": "soulred/services/__init__.py",
+      "purpose": "核心领域业务服务与算法模块统一导出",
+      "key_symbols": [
+        "AuthService",
+        "ContentSafetyService",
+        "PostService",
+        "FeedService",
+        "MatchingService",
+        "ChatService",
+        "CircleService"
+      ]
+    },
+    {
+      "path": "soulred/services/safety_service.py",
+      "purpose": "AI 多模态与文本风控审核服务，实现涉黄涉政与引流欺诈敏感词实时拦截和状态流转",
+      "key_symbols": [
+        "ContentSafetyService",
+        "check_text_safety",
+        "check_image_safety",
+        "review_post_content"
+      ]
+    },
+    {
+      "path": "soulred/services/auth_service.py",
+      "purpose": "用户注册、密码验证、JWT 签发、实名/学历认证审核及数据脱敏服务",
+      "key_symbols": [
+        "AuthService",
+        "register_user",
+        "authenticate_user",
+        "submit_verification",
+        "apply_privacy_filters"
+      ]
+    },
+    {
+      "path": "soulred/services/post_service.py",
+      "purpose": "动态图文发布、草稿自动保存恢复、点赞计数器缓存更新与动态详情组装服务",
+      "key_symbols": [
+        "PostService",
+        "create_post",
+        "save_draft",
+        "get_draft",
+        "toggle_like",
+        "get_post_detail"
+      ]
+    },
+    {
+      "path": "soulred/services/feed_service.py",
+      "purpose": "小红书式双列瀑布流排序计算引擎，支持卡片自适应宽高比、图片角标及多频道切换排序",
+      "key_symbols": [
+        "FeedService",
+        "get_waterfall_feed",
+        "calculate_card_aspect_ratio",
+        "rank_feed_items"
+      ]
+    },
+    {
+      "path": "soulred/services/matching_service.py",
+      "purpose": "Soul 风格多维特征向量余弦相似度算法、青藤每日精选互选流转与陌生人首句打招呼防骚扰频控",
+      "key_symbols": [
+        "MatchingService",
+        "calculate_soul_similarity",
+        "search_soul_radar",
+        "generate_daily_recommendations",
+        "handle_crush_action",
+        "check_stranger_message_limit"
+      ]
+    },
+    {
+      "path": "soulred/services/chat_service.py",
+      "purpose": "即时通讯业务服务，实现基于共同爱好的智能破冰话术推荐、亲密度经验值计算与字母点亮状态机",
+      "key_symbols": [
+        "ChatService",
+        "generate_icebreakers",
+        "record_message",
+        "calculate_intimacy_gain",
+        "recall_message",
+        "get_conversation_history"
+      ]
+    },
+    {
+      "path": "soulred/services/circle_service.py",
+      "purpose": "兴趣圈子与社群互动服务，负责圈子管理、多层级楼中楼评论树递归构建及违规封禁操作",
+      "key_symbols": [
+        "CircleService",
+        "list_circles",
+        "join_circle",
+        "post_comment",
+        "build_comment_tree",
+        "moderate_content"
+      ]
+    },
+    {
+      "path": "tests/test_services.py",
+      "purpose": "领域业务算法单元测试，全面覆盖契合度打分、瀑布流宽高计算、亲密度晋升及风控拦截逻辑",
+      "key_symbols": [
+        "test_soul_similarity_calc",
+        "test_waterfall_card_aspect_ratio",
+        "test_intimacy_xp_progression",
+        "test_safety_keyword_interception",
+        "test_stranger_greeting_quota"
+      ]
+    },
+    {
+      "path": "soulred/api/__init__.py",
+      "purpose": "Web API 根路由包初始化与总路由聚合",
+      "key_symbols": [
+        "api_router"
+      ]
+    },
+    {
+      "path": "soulred/api/deps.py",
+      "purpose": "FastAPI 依赖注入组件，提供数据库 Session、JWT 令牌校验与当前登录用户身份上下文",
+      "key_symbols": [
+        "get_db_session",
+        "get_current_user",
+        "get_current_active_user"
+      ]
+    },
+    {
+      "path": "soulred/api/v1/__init__.py",
+      "purpose": "聚合各业务模块的 v1 版本 REST API 路由分发器",
+      "key_symbols": [
+        "v1_router"
+      ]
+    },
+    {
+      "path": "soulred/api/v1/auth.py",
+      "purpose": "用户注册、登录凭证下发与真实度认证提交 REST 控制器",
+      "key_symbols": [
+        "router",
+        "register",
+        "login",
+        "submit_verification"
+      ]
+    },
+    {
+      "path": "soulred/api/v1/users.py",
+      "purpose": "个人社交主页档案查询修改、3D虚拟形象设置与颗粒度隐私设置切换 REST 控制器",
+      "key_symbols": [
+        "router",
+        "get_my_profile",
+        "update_profile",
+        "update_privacy_settings",
+        "get_user_persona"
+      ]
+    },
+    {
+      "path": "soulred/api/v1/feed.py",
+      "purpose": "小红书双列瀑布流动态广场接口（支持推荐、附近、关注三主频道无缝切换）REST 控制器",
+      "key_symbols": [
+        "router",
+        "get_waterfall_feed"
+      ]
+    },
+    {
+      "path": "soulred/api/v1/posts.py",
+      "purpose": "动态发布、本地草稿读写、动态详情沉浸展示与快速爱心点赞 REST 控制器",
+      "key_symbols": [
+        "router",
+        "create_post",
+        "save_draft",
+        "get_my_draft",
+        "get_post",
+        "toggle_like"
+      ]
+    },
+    {
+      "path": "soulred/api/v1/matching.py",
+      "purpose": "灵魂星盘测评提交、在线雷达匹配（相似度>80%）、每日精选卡片与双向心动 REST 控制器",
+      "key_symbols": [
+        "router",
+        "submit_quiz",
+        "get_soul_radar",
+        "get_daily_recommendations",
+        "post_crush_action"
+      ]
+    },
+    {
+      "path": "soulred/api/v1/chat.py",
+      "purpose": "私信会话列表、历史记录检索、智能破冰话术获取与亲密度密友树状态 REST 控制器",
+      "key_symbols": [
+        "router",
+        "list_conversations",
+        "get_chat_history",
+        "get_icebreakers",
+        "get_intimacy_status",
+        "recall_message"
+      ]
+    },
+    {
+      "path": "soulred/api/v1/circles.py",
+      "purpose": "兴趣圈子广场、加入圈子、多级楼中楼评论发表与热评置顶展示 REST 控制器",
+      "key_symbols": [
+        "router",
+        "list_circles",
+        "join_circle",
+        "get_circle_posts",
+        "create_comment",
+        "get_comment_tree"
+      ]
+    },
+    {
+      "path": "soulred/api/ws_chat.py",
+      "purpose": "WebSocket 实时私信长连接网关（端到端延迟<200ms），包含在线连接管理、心跳保活与瞬断补偿",
+      "key_symbols": [
+        "ConnectionManager",
+        "manager",
+        "websocket_chat_endpoint"
+      ]
+    },
+    {
+      "path": "soulred/static/index.html",
+      "purpose": "内置小红书风格双列瀑布流高颜值前端交互 Demo 门户，支持响应式布局、爱心互动及 /docs 导航，专供真实浏览器 E2E 点击验证",
+      "key_symbols": [
+        "renderWaterfallCards",
+        "switchChannel",
+        "toggleCardLike",
+        "loadDemoData"
+      ]
+    },
+    {
+      "path": "soulred/main.py",
+      "purpose": "FastAPI 应用主入口，挂载全局中间件、静态资源、生命周期钩子、系统自检健康探针及交互门户",
+      "key_symbols": [
+        "app",
+        "lifespan",
+        "health_check",
+        "root_portal"
+      ]
+    },
+    {
+      "path": "tests/__init__.py",
+      "purpose": "测试包根初始化声明",
+      "key_symbols": []
+    },
+    {
+      "path": "tests/conftest.py",
+      "purpose": "Pytest 全局夹具，提供内存 SQLite 隔离测试会话、TestClient、模拟用户及认证 Header",
+      "key_symbols": [
+        "db_session",
+        "client",
+        "test_user_a",
+        "test_user_b",
+        "auth_headers_user_a",
+        "auth_headers_user_b"
+      ]
+    },
+    {
+      "path": "tests/test_models.py",
+      "purpose": "底层 ORM 数据实体持久化、级联关系与 AES-256 加解密工具自动化测试用例",
+      "key_symbols": [
+        "test_crypto_aes_gcm",
+        "test_user_model_creation",
+        "test_post_image_relationships",
+        "test_chat_intimacy_relationships"
+      ]
+    },
+    {
+      "path": "tests/test_api_endpoints.py",
+      "purpose": "REST API 全链路集成测试，覆盖用户注册登录、瀑布流三频道切换、动态发布点赞、互选心动与圈子评论",
+      "key_symbols": [
+        "test_auth_flow",
+        "test_waterfall_feed_channels",
+        "test_post_creation_and_like",
+        "test_matching_and_crush_flow",
+        "test_circle_comments"
+      ]
+    },
+    {
+      "path": "tests/test_websocket.py",
+      "purpose": "WebSocket 实时长连接端到端集成测试，覆盖双向消息投递与陌生人单日限额频控校验",
+      "key_symbols": [
+        "test_websocket_direct_message_exchange",
+        "test_websocket_stranger_daily_limit"
+      ]
+    }
+  ],
+  "design_notes": "### SoulRed 社交平台系统架构设计与设计原则 (System Architectural Design)\n\n#### 1. 架构设计哲学与分层策略 (Clean Layered Architecture)\n本项目采用现代化分层架构（Clean / Hexagonal Architecture 思想），实现高内聚、低耦合。各层职责严格隔离：\n- **存储与规范层 (Data & Persistence Layer)**：统一定义 SQLAlchemy ORM 模型、Pydantic v2 输入输出契约及全局安全加解密机制，确保数据原子性与一致性。\n- **核心领域服务层 (Domain Services & Business State Machines)**：承载小红书式瀑布流生成、Soul 风格灵魂契合度与青藤精选推荐算法、即时通讯亲密度养成状态机及 AI 风控审核，不依赖具体 HTTP 协议，具备极高的可测试性与复用性。\n- **接口与网关层 (API Gateway & Real-time Layer)**：提供基于 FastAPI 的 RESTful API 路由与低延迟 WebSocket 长连接网关，并集成静态瀑布流前端展示门户，保障 Browser E2E 测试及生产环境开箱即用。\n\n#### 2. 小红书风格双列自适应瀑布流算法 (Xiaohongshu-Style Waterfall Feed)\n- **宽高比自适应与骨架屏预计算**：支持主流切图比例（1:1 正方形, 3:4 经典人像, 4:3 横构图）。Feed 接口直接返回计算好的卡片预估高度 `aspect_ratio` 与骨架屏色彩标记，前端双列渲染无需等待图片异步加载完成即可精准分配左右列高度平衡，杜绝页面加载闪烁与布局颠簸（Cumulative Layout Shift, CLS）。\n- **多频道高效分发**：支持“推荐 (Recommend)”、“附近 (Nearby)”、“关注 (Following)”三频道独立索引排序；推荐频道融入时效性衰减（Time-decay）与互动热度（Likes + Comments）混合打分，附近频道基于地理距离切片，响应耗时严格控制在 800ms 内。\n\n#### 3. 灵魂与青藤互选推荐匹配引擎 (Matching & Recommendation Engine)\n- **灵魂星盘与多维契合度向量算法**：用户完成包含 MBTI 性格、生活习惯与交友期望的轻量测试后，向量化为多维特征数组。Soul 风格“灵魂雷达”采用余弦相似度（Cosine Similarity）与加权欧氏距离，毫秒级筛选出契合度 >= 80% 的在线用户。\n- **青藤每日精选与双向奔赴状态机**：每日凌晨由推荐引擎离线生成 5-10 张专属精选推荐卡片；用户支持“心动 (Crush)”或“跳过 (Skip)”。当双方互相心动时，原子性触发 `CrushStatusEnum.MUTUAL`（双向奔赴）事件，触发系统级动画消息并自动初始化专属私聊会话通道。\n- **陌生人反骚扰防线**：未经互选或非好友关系的陌生人，限制单日仅可发送 1 条打招呼纯文本消息，禁止发送图片及语音，从底层杜绝垃圾引流与骚扰。\n\n#### 4. 即时通讯与亲密度进阶状态机 (Real-Time IM & Chat Intimacy Lifecycle)\n- **高并发低延迟长连接网关**：基于 Starlette WebSocket 构建连接管理器（ConnectionManager），支持单节点数千并发连接、消息端到端投递 P95 < 200ms、离线消息持久化存储与上线拉取补偿。\n- **智能破冰指南生成**：根据聊天双方的兴趣标签交集（如共同去过的展馆、同类音乐标签、相同 MBTI）动态提取关键词，自动合成破冰首句建议（如：“你们都喜欢 #民谣livehouse，聊聊最近去过的现场吧”）。\n- **亲密度点亮机制 (Soul-Style Intimacy Level)**：通过持续互动天数累积与聊天字数（每日设上限防作弊）计算亲密度经验值 (XP)，阶梯式点亮字母与亲密徽章（从“初识萌芽”到“挚友星辰”），解锁专属聊天气泡与合影挂件。\n- **消息撤回与安全风控**：支持在 2 分钟时限内撤回消息，并提供两步式快速拉黑与举报入口。\n\n#### 5. 内容安全风控与合规保障 (Content Safety & Risk Control)\n- **多层级实时风控引擎**：在动态发布、评论提交和私信通信的关键链路中，前置接入敏感词实时正则阻断、涉政涉黄涉暴特征识别及引流诈骗模式检测。\n- **违规处置分级机制**：违规内容自动阻断；高可疑内容转入人工待审队列；涉事账户根据严重程度触发警告、禁言或即时封禁。\n\n#### 6. 严苛隐私防护与零知识保护 (Privacy & Credential Security)\n- **敏感数据 AES-256 加密**：用户手机号、实名认证信息、身份证件摘要等核心凭据在入库前采用 AES-256-GCM 高强度密文存储，查询时按需脱敏解密，防御数据库拖库泄露。\n- **颗粒度隐私控制**：用户可一键开启“隐藏距离”、“不让附近的人看到我”及“通讯录联系人隐身”，系统在公域 Feed 与雷达搜索中严格过滤隐身用户坐标。\n\n#### 7. 并行工程分工策略 (Parallel Engineering Strategy)\n严格解耦为 3 个子模块，各工程师基于固定的文件边界与强类型接口规范并行开发：\n1. **Module 1 (mod_data_model)**：率先完成数据库模型、Pydantic 契约、加密工具与配置，奠定系统数据地基；\n2. **Module 2 (mod_business_logic)**：并发实现瀑布流算子、推荐匹配、亲密度与风控逻辑，依托单元测试进行独立验证；\n3. **Module 3 (mod_api_gateway)**：并行搭建 REST 控制器、WebSocket 实时网关及 Web 前端 Portal，并执行双轨自动化回归测试。"
 }

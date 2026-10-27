@@ -1,1 +1,1 @@
-"""Test package initialization."""
+"""SoulRed test suite package."""

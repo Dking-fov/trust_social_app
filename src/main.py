@@ -58,10 +58,19 @@ async def custom_exception_handler(request: Request, exc: AppBaseException):
 app.include_router(api_router)
 
 
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, RedirectResponse
+
+dist_path = Path(__file__).parent.parent / "dist"
+if dist_path.exists() and (dist_path / "assets").exists():
+    app.mount("/assets", StaticFiles(directory=str(dist_path / "assets")), name="assets")
+
 @app.get("/", tags=["Portal"])
 async def root_portal():
-    """Root portal redirecting to interactive Swagger API documentation."""
-    from fastapi.responses import RedirectResponse
+    """Serves the compiled React frontend Web App if available, otherwise redirects to Swagger."""
+    if dist_path.exists() and (dist_path / "index.html").exists():
+        return FileResponse(dist_path / "index.html")
     return RedirectResponse(url="/docs")
 
 

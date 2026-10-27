@@ -1,95 +1,99 @@
 {
-  "project_name": "xiaohongshu-portrait-feed",
-  "summary": "A responsive Xiaohongshu-style (RED) visual exploration homepage dedicated to trending portrait photography. It features a responsive masonry waterfall grid showcasing popular portrait posts with high-resolution imagery, creator profiles, engagement metrics (likes, favorites), search and filter capabilities by trending tags, interactive lightbox preview with detailed creator notes, and smooth infinite scroll loading.",
+  "project_name": "soulred-social-platform",
+  "summary": "SoulRed 是一款结合“小红书式高美感双列瀑布流视觉呈现”与“Soul / 青藤之恋深度社交基因”的全新青年社交平台。平台以高颜值的生活方式图文和心情日记作为社交破冰触点，通过灵魂/兴趣契合度算法、每日精选互选推荐、即时私信破冰与亲密度养成体系，解决传统纯内容社区缺乏社交关系链沉淀、以及传统社交软件缺乏真实生动生活切片展示的痛点。",
   "core_features": [
-    "Responsive Masonry Waterfall Layout (双列/多列响应式瀑布流展示人物照片卡片，卡片自适应高度与平滑加载)",
-    "Trending Portrait Card Component (包含高质量人物照片封面、标题、创作者头像与昵称、点赞数交互与高亮状态)",
-    "Interactive Detail Modal / Lightbox (点击照片卡片弹出全屏/半屏详情浮层，支持高清大图预览、详细笔记描述、标签及互动区)",
-    "Tag & Category Filter Bar (热门人物摄影标签导航栏，如'街拍穿搭'、'复古写真'、'情绪人像'、'艺人神颜'、'日系胶片'等快速筛选与高亮)",
-    "Search and Sort Mechanism (支持按关键词搜索人物或摄影师，并支持按'最热'、'最新'、'点赞最多'等维度排序)",
-    "Infinite Scroll & Mock Data Generation (基于虚拟滚动或触底无限加载模拟流行热度人物照片流，内置丰富高清人像摄影Mock数据)",
-    "Like & Favorite Interactive Feedback (卡片及详情弹窗支持点赞收藏，具有微动效并实时更新点赞计数与本地持久化)"
+    "小红书风格双列瀑布流动态广场 (Xiaohongshu-Style Dual-Column Waterfall Content Feed)",
+    "轻量化图文/心情动态发布与视觉交互卡片 (Rich-Media Post Creation & Interactive Note Cards)",
+    "灵魂/兴趣匹配与每日推荐机制 (Soul & QingTeng-Style Interest Matching Engine)",
+    "即时通讯、破冰话术与亲密度养成系统 (Real-Time IM, Icebreakers & Chat Intimacy Level)",
+    "兴趣圈子、精选话题与多级评论互动 (Interest Circles, Topic Squares & Interactive Comments)",
+    "个性化社交档案、多重认证与严苛隐私保护 (Personalized Social Persona, Authenticity Verification & Privacy Protection)"
   ],
   "non_functional_requirements": [
-    "Performance: First Contentful Paint (FCP) < 1.0s, 保持 60fps 流畅滚动体验，对屏幕外图片采用原生 loading='lazy' 及骨架屏 (Skeleton) 占位",
-    "Visual & UX: 严格遵循小红书风格视觉规范（暖灰白背景、柔和圆角卡片、精致微边框、主题红 #ff2442 高亮与点赞动效）",
-    "Responsive Design: 移动端优先适配（手机屏幕 <768px 双列瀑布流，平板及桌面端 >=768px 自适应 3-5 列）",
-    "Robust Error Handling: 图片加载失败时自动展示优雅的默认人像占位图并保持卡片布局比例，避免累积布局偏移（CLS < 0.1）",
-    "Code Quality & Cleanliness: 模块化组件设计，状态管理清晰，易于单测与端到端自动化测试验证"
+    "性能与渲染：双列瀑布流首屏加载时间 < 1.0s，长列表无限滚动帧率稳定在 60 FPS；图片采用 WebP 渐进式加载与多级 CDN 边缘缓存。",
+    "实时通讯性能：WebSocket 实时私信端到端投递延迟 P95 < 200ms，支持断线自动指数退避重连与离线消息拉取补偿。",
+    "高并发与扩展性：IM 与动态匹配服务支持单节点 10,000+ 并发长连接，核心动态流 Feed 查询支持 5,000+ QPS，保障高峰期稳定不卡顿。",
+    "内容安全与合规：内置 AI 文本与图像多模态风控审核引擎，拦截涉黄、涉政、引流诈骗等违规内容，敏感词实时阻断，可疑内容 60 秒内流转人工复审。",
+    "隐私防护与反骚扰：支持屏蔽通讯录好友、隐身模式与模糊定位；非双向好友禁止无上限私信骚扰，实施单日匹配上限与诈骗行为即时封禁。",
+    "代码规范与可维护性：前端采用模块化组件与虚拟列表架构，业务逻辑单元测试覆盖率 >= 85%，服务间通信通过 gRPC/REST 标准化，集成 OpenTelemetry 分布式链路追踪。"
   ],
   "user_stories": [
     {
       "id": "US-001",
-      "title": "Browse Trending Portrait Waterfall Grid",
-      "as_a": "visitor",
-      "i_want": "to view a dynamic waterfall (masonry) feed of trending portrait photos on the homepage",
-      "so_that": "I can effortlessly browse visually appealing high-popularity portrait photographs in a layout familiar to Xiaohongshu users",
+      "title": "双列瀑布流动态发现广场 (Xiaohongshu-Style Waterfall Feed)",
+      "as_a": "追求视觉审美与共鸣的年轻社交用户",
+      "i_want": "在首页通过小红书风格的双列瀑布流卡片浏览他人的日常生活记录、心情动态与兴趣分享",
+      "so_that": "能够以直观且赏心悦目的方式了解同龄人的真实生活，发现志趣相投的潜在朋友",
       "acceptance_criteria": [
-        "Given the user visits the homepage, when the page loads, then high-resolution portrait cards are rendered in an unbalanced multi-column waterfall grid (2 columns on mobile, 3-4 columns on desktop).",
-        "Each card displays the portrait image cover, post title, author avatar, author nickname, and like count with an icon.",
-        "Images use progressive loading or skeleton shimmer placeholders before loading to avoid layout shifts.",
-        "Broken image links fallback gracefully to an elegant default portrait placeholder without breaking column flow."
+        "首页默认提供双列错落卡片瀑布流布局，支持基于图片高宽比的自适应高度计算与占位骨架屏展示。",
+        "每张动态卡片包含：封面大图/多图角标、动态标题/内容摘要（最多展示 2 行）、作者头像、昵称以及快速点赞爱心图标与点赞数。",
+        "支持顶部切换“推荐”、“附近”、“关注”三个主频道，频道切换加载耗时在常规网络下低于 800ms。",
+        "点击卡片通过平滑转场动画进入沉浸式动态详情页，支持全屏轮播切图、富文本展示、发布位置、时间戳及底部互动栏。"
       ]
     },
     {
       "id": "US-002",
-      "title": "View Portrait Details and High-Res Preview",
-      "as_a": "user",
-      "i_want": "to click any portrait card to open an interactive modal lightbox",
-      "so_that": "I can inspect the full-resolution photo, read the creator's caption/tags, and see engagement details",
+      "title": "轻量化图文与心情动态发布 (Rich-Media Post Creation)",
+      "as_a": "乐于展示自我与记录日常的内容创作者/社交用户",
+      "i_want": "便捷发布包含精美图文、心情状态标签及话题分类的小红书风格动态卡片",
+      "so_that": "展示自己的个性与审美切片，以此吸引气味相投的伙伴主动与我互动",
       "acceptance_criteria": [
-        "Given a portrait card on the feed, when the user clicks or taps the card, then a modal pops up displaying the full-size image alongside post text, author info, publication date, and associated tags.",
-        "The modal can be closed via a close button ('X'), clicking the background backdrop, or pressing the Esc key on keyboard.",
-        "Scrolling the modal content locks the background body scroll to prevent disorientation."
+        "发布器支持上传最多 9 张图片，内置 1:1、3:4、4:3 等多种主流比例裁剪、图片压缩及主流风格滤镜调节。",
+        "支持在动态中关联 1~5 个社交话题标签（如 #MBTI、#周末去哪儿、#民谣livehouse）并选填当前“心情状态”（如 治愈中、求聊天、发呆）。",
+        "具备客户端本地草稿自动暂存机制，应用意外退出或网络异常重试时不丢失已编辑内容。",
+        "发布成功并通过 AI 审核后，2 秒内同步至个人主页，并根据推荐标签智能分发至对应公域瀑布流广场。"
       ]
     },
     {
       "id": "US-003",
-      "title": "Filter Portraits by Trending Tags",
-      "as_a": "user",
-      "i_want": "to filter portrait posts by trending photography tags (e.g., '街拍穿搭', '情绪人像', '复古写真', '日系胶片')",
-      "so_that": "I can quickly discover specific styles of trending person portraits that match my interests",
+      "title": "灵魂与兴趣匹配推荐引擎 (Soul & QingTeng-Style Matching)",
+      "as_a": "希望高效建立深度连接、摆脱无效社交的用户",
+      "i_want": "通过性格/兴趣算法以及类似 Soul / 青藤之恋的推荐匹配机制寻找合拍的伙伴",
+      "so_that": "无需盲目刷脸海选，就能基于内在价值观和生活契合度开启高质量社交",
       "acceptance_criteria": [
-        "Given the top tag navigation bar, when the user clicks a specific category tag, then the waterfall feed filters instantaneously to show only cards matching that tag.",
-        "The active tag is visually highlighted with an active badge style (Xiaohongshu red pill style).",
-        "Clicking '全部' (All) or re-clicking the active tag clears the filter and restores all trending portraits."
+        "新用户注册可参与轻量级个性与价值观测试（涵盖 MBTI、生活习惯、交友期望），生成专属“灵魂/兴趣星盘”标签。",
+        "提供两种社交发现模式：(a) Soul 风格的“灵魂雷达匹配”，实时计算匹配度高于 80% 的在线用户；(b) 青藤风格的“每日精选推荐”，每天向用户推送 5-10 位优质卡片，提供“心动/喜欢”与“跳过”操作。",
+        "双方互相点击“心动”或匹配成功时，触发“双向奔赴”动画，并自动建立私聊会话通道。",
+        "非互相心动或未经匹配的陌生人，每日最多发送 1 条打招呼文字且不可发送图片/语音，防范垃圾营销骚扰。"
       ]
     },
     {
       "id": "US-004",
-      "title": "Like / Unlike Portrait Posts",
-      "as_a": "user",
-      "i_want": "to click the like heart icon on any card or detail modal",
-      "so_that": "I can express appreciation for popular portrait creators and see the like counter update immediately",
+      "title": "即时私信通讯与破冰互动机制 (Real-Time IM & Icebreakers)",
+      "as_a": "刚刚完成匹配或互关的社交用户",
+      "i_want": "在即时私信中与好友实时畅聊，并使用破冰工具与亲密度进阶功能化解尴尬",
+      "so_that": "能够轻松开启对话并随着深入交流逐渐加深双方的情感联结",
       "acceptance_criteria": [
-        "Given an unliked portrait card, when the user clicks the heart icon, then the icon turns solid red with a subtle spring bounce animation and the like counter increments by 1.",
-        "When the user clicks the liked heart icon again, it reverts to the outline state and decrements by 1.",
-        "Like state is synchronized between the feed card and the detail modal.",
-        "Like states persist in browser localStorage across page reloads."
+        "基于 WebSocket 协议实现文本、表情、语音条（支持听筒/扬声器切换）及高清图片的稳定收发，端到端延迟低于 200ms。",
+        "新匹配会话顶部内置“智能破冰指南”，自动根据双方资料提取共同爱好生成破冰话题建议（如“你们都常去上海看展，聊聊最近印象深刻的展览吧”）。",
+        "引入“亲密度点亮机制”（参考 Soul 密友树/字母点亮），随持续互动天数与字数累积增加经验值，逐步解锁专属聊天装扮与合影挂件。",
+        "聊天页面提供极简的撤回、消息已读标记、长按引用回复以及两步内快速拉黑/举报功能。"
       ]
     },
     {
       "id": "US-005",
-      "title": "Infinite Scroll Feed Continuation",
-      "as_a": "user",
-      "i_want": "more trending portraits to load automatically as I scroll near the bottom of the feed",
-      "so_that": "I can continuously enjoy an uninterrupted discovery experience without manual pagination clicks",
+      "title": "兴趣圈子与话题互动生态 (Interest Circles & Topic Squares)",
+      "as_a": "希望寻找特定圈层归属感的垂直兴趣爱好者",
+      "i_want": "加入特定主题的兴趣圈子并参与多层级的话题动态讨论与评论互动",
+      "so_that": "在群聚式垂直氛围中找到同好组织，沉淀长期社群归属感",
       "acceptance_criteria": [
-        "Given the user scrolls within 300px of the page bottom, when scrolling stops or reaches threshold, then a loading indicator appears and the next batch of trending portrait cards is appended to the grid.",
-        "If no more items are available, a subtle footer message '已加载全部精彩内容' (All caught up) is displayed.",
-        "Throttling/debouncing is applied to scroll event listeners to prevent duplicate requests and maintain 60fps."
+        "用户可按类别浏览（如 艺术展览、户外徒步、同城交友、深夜树洞）并加入感兴趣的社群圈子。",
+        "圈子内动态支持“最新发布”与“精华热门”排序切换，圈主及管理员可置顶优质讨论贴。",
+        "评论区支持多层级楼中楼回复、@通知、图片评论及点赞互动，热评智能置顶展示。",
+        "管理员与内容风控机制可对违规言论执行一键禁言、删帖并对当事人进行信用惩戒。"
       ]
     },
     {
       "id": "US-006",
-      "title": "Search and Sort Trending Portraits",
-      "as_a": "user",
-      "i_want": "to search portraits by creator name or title keyword, and sort by '最热' (Hot) or '最新' (Latest)",
-      "so_that": "I can locate specific portraits and control the ranking order",
+      "title": "个性化社交档案与隐私安全认证 (Profile & Privacy Protection)",
+      "as_a": "注重网络安全与个人隐私的真实社交用户",
+      "i_want": "定制展现个性形象的主页，同时享有严谨的身份背书和全方位的隐私安全保护",
+      "so_that": "在确保自身隐私与安全的前提下，更放心地与真实可靠的用户建立信任关系",
       "acceptance_criteria": [
-        "Given the search input in the header, when the user types a keyword, the cards filter in real-time or upon pressing Enter.",
-        "Given the sort switcher ('最热' / '最新'), clicking sorts the feed immediately by like count descending or publish time descending.",
-        "When a search yields 0 results, an empty state illustration with '未找到相关人像笔记' and a reset button is shown."
+        "个人主页支持设置 3D 虚拟拟态/美学形象头像、个性背景墙、10 秒语音介绍名片及多维兴趣标签展示。",
+        "借鉴青藤之恋引入可选的“实名/学历/职业真实度认证”机制，通过官方加密渠道验证并点亮对应信誉徽章。",
+        "隐私中心提供颗粒度可控设置，支持“隐藏地理距离”、“不让附近的人看到我”、“对通讯录联系人隐身”。",
+        "所有用户身份认证凭证与手机号码均采用 AES-256 密文存储，敏感信息在客户端一律脱敏显示。"
       ]
     }
   ]
