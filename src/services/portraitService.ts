@@ -84,8 +84,8 @@ export function getPortraitById(id: string): PortraitItem | undefined {
   }
 
   // Check generated portraits if dynamically loaded
-  const dynamicItems = generateRandomPortraits(MAX_SYNTHETIC_ITEMS, 0);
-  const foundDynamic = dynamicItems.find((p) => p.id === id);
+  const dynamicItems: PortraitItem[] = generateRandomPortraits(MAX_SYNTHETIC_ITEMS, 0);
+  const foundDynamic = dynamicItems.find((p: PortraitItem) => p.id === id);
   if (foundDynamic) {
     const likedSet = getLikedPostIds();
     return {

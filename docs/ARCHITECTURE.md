@@ -1,112 +1,84 @@
 # soulred-social-platform - 系统架构设计规格书
 
 ## 技术栈选型
-- **cryptography**: Cryptography (AES-256-GCM) + Passlib (bcrypt) + PyJWT
-- **database**: SQLAlchemy 2.0+ (SQLite in-memory for testing, PostgreSQL ready)
-- **framework**: FastAPI 0.115+ (ASGI, Starlette)
-- **frontend_portal**: HTML5 / CSS3 Responsive Dual-Column Waterfall (Native Vanilla JS, zero bundle build required)
+- **authentication**: python-jose 3.3.0, passlib[bcrypt] 1.7.4
+- **database**: SQLite 3 + SQLAlchemy 2.0 (AsyncIO with aiosqlite)
+- **encryption**: Cryptography 43.0+ (AES-256-GCM / PBKDF2HMAC)
+- **frontend**: HTML5, CSS3 (Modern Dual-Column CSS Grid/Flex Waterfall, Dark Aesthetic UI), Vanilla ES6 JavaScript (Native WebSockets, Lightbox, Canvas Radar Animation)
 - **language**: Python 3.12
-- **realtime**: Starlette WebSocket + ConnectionManager with Heartbeat & Backoff
-- **testing**: pytest 8.3+, pytest-asyncio, httpx (TestClient)
-- **validation**: Pydantic v2 + Pydantic-Settings
+- **realtime**: FastAPI WebSocket + asyncio In-Memory PubSub/Broadcast Manager
+- **server**: Uvicorn 0.32.0+
+- **testing**: pytest 8.3+, pytest-asyncio 0.24+, httpx 0.27+
+- **validation**: Pydantic 2.9+ (pydantic-settings 2.5+)
+- **web_framework**: FastAPI 0.115.0+
 
 ## 第三方依赖清单
 - fastapi>=0.115.0
-- uvicorn[standard]>=0.30.0
-- pydantic>=2.8.0
-- pydantic-settings>=2.4.0
-- sqlalchemy>=2.0.30
-- passlib[bcrypt]>=1.7.4
-- pyjwt>=2.9.0
+- uvicorn[standard]>=0.32.0
+- sqlalchemy>=2.0.35
+- aiosqlite>=0.20.0
+- pydantic>=2.9.0
+- pydantic-settings>=2.5.0
 - cryptography>=43.0.0
-- python-multipart>=0.0.9
-- httpx>=0.27.0
+- python-jose[cryptography]>=3.3.0
+- passlib[bcrypt]>=1.7.4
+- python-multipart>=0.0.12
 - pytest>=8.3.0
 - pytest-asyncio>=0.24.0
-- websockets>=12.0
+- httpx>=0.27.0
+- websockets>=13.0
 
-## 规划文件树结构 ({len(state.architecture.file_tree)} 个模块)
-- `requirements.txt`: 项目依赖声明文件，涵盖 Web、数据库、安全加解密、WebSocket 及自动化测试套件 (Symbols: fastapi, uvicorn, sqlalchemy, pydantic, pydantic-settings, passlib, pyjwt, cryptography, httpx, pytest, pytest-asyncio, websockets)
-- `soulred/__init__.py`: SoulRed 平台核心包初始化及版本号声明 (Symbols: __version__)
-- `soulred/config.py`: 基于 Pydantic-Settings 的全局配置管理，包括数据库连接串、JWT 密钥、AES 密钥及服务端口配置 (Symbols: Settings, get_settings)
-- `soulred/database.py`: SQLAlchemy 数据库引擎、连接会话工厂、声明基类及初始化表结构入口 (Symbols: engine, SessionLocal, Base, get_db, init_db)
-- `soulred/utils/__init__.py`: 工具类模块初始化 (Symbols: )
-- `soulred/utils/crypto.py`: AES-256-GCM 敏感数据加解密工具、bcrypt 密码哈希与 JWT 身份凭证生成校验工具 (Symbols: encrypt_field, decrypt_field, hash_password, verify_password, create_access_token, decode_access_token)
-- `soulred/models/__init__.py`: 导出所有 SQLAlchemy ORM 模型以供持久化与数据库表自动迁移注册 (Symbols: Base, User, UserProfile, VerificationBadge, PrivacySetting, Post, PostImage, PostLike, PostDraft, PersonalityQuizResult, DailyRecommendation, CrushMatch, ChatConversation, ChatMessage, IntimacyRecord, InterestCircle, CircleMember, CircleComment)
-- `soulred/models/base.py`: 通用模型基类，提供 UUID 主键、创建/更新时间戳及软删除支持 (Symbols: TimestampMixin, UUIDPrimaryKeyMixin, SoftDeleteMixin)
-- `soulred/models/user.py`: 用户主账号、个性化社交主页档案（3D虚拟形象/语音名片/MBTI）、青藤式学历/职业认证徽章与隐私配置数据模型 (Symbols: User, UserProfile, VerificationBadge, PrivacySetting, VerificationStatusEnum, GenderEnum)
-- `soulred/models/post.py`: 小红书风格动态帖子、自适应多图卡片元数据（1:1/3:4/4:3）、点赞记录及草稿暂存模型 (Symbols: Post, PostImage, PostLike, PostDraft, AspectRatioEnum, PostStatusEnum, MoodTagEnum)
-- `soulred/models/match.py`: 个性/价值观测试答卷星盘、青藤风格每日精选卡片推送记录及双向奔赴心动互选模型 (Symbols: PersonalityQuizResult, DailyRecommendation, CrushMatch, CrushStatusEnum)
-- `soulred/models/chat.py`: 即时通讯会话、私信消息体（文本/表情/语音/图片/已读/撤回）与亲密度点亮经验值模型 (Symbols: ChatConversation, ChatMessage, IntimacyRecord, MessageTypeEnum, IntimacyLevelEnum)
-- `soulred/models/circle.py`: 兴趣圈子社群、成员归属关系以及多层级楼中楼互动评论树模型 (Symbols: InterestCircle, CircleMember, CircleComment, CircleRoleEnum, CircleCategoryEnum)
-- `soulred/schemas/__init__.py`: 统一导出系统各模块 Pydantic 请求与响应契约 Schema (Symbols: UserCreate, UserLogin, UserProfileResponse, PostCreate, PostWaterfallCard, PostDetailResponse, QuizSubmitSchema, DailyCardResponse, MessageSendSchema, MessageResponse, CircleResponse, CommentResponse)
-- `soulred/schemas/user.py`: 用户注册、登录凭证、社交档案更新、隐私中心设置与官方实名/学历认证 Pydantic 校验模型 (Symbols: UserCreate, UserLogin, TokenResponse, UserProfileUpdate, UserProfileResponse, PrivacySettingSchema, VerificationSubmitSchema)
-- `soulred/schemas/post.py`: 小红书双列瀑布流卡片响应体、动态图文发布、本地草稿暂存及点赞交互 Pydantic 校验模型 (Symbols: PostCreate, PostImageSchema, PostWaterfallCard, PostDetailResponse, PostDraftSave, PostLikeToggleResponse)
-- `soulred/schemas/match.py`: 灵魂测试提交、Soul 雷达匹配卡片（相似度>80%）、每日推荐卡片与双向奔赴心动操作 Pydantic 校验模型 (Symbols: QuizSubmitSchema, QuizResultResponse, SoulRadarMatchCard, DailyCardResponse, CrushActionRequest, CrushActionResponse)
-- `soulred/schemas/chat.py`: WebSocket/REST 实时消息收发、智能破冰话术推荐、亲密度等级进展与消息撤回 Pydantic 校验模型 (Symbols: MessageSendSchema, MessageResponse, ConversationSummaryResponse, IcebreakerResponse, IntimacyStatusResponse, MessageRecallRequest)
-- `soulred/schemas/circle.py`: 兴趣圈子创建、圈子详情、多层级树状评论及内容风控审核 Pydantic 校验模型 (Symbols: CircleCreateSchema, CircleResponse, CommentCreateSchema, CommentResponse, CommentTreeResponse, ModerationActionSchema)
-- `soulred/services/__init__.py`: 核心领域业务服务与算法模块统一导出 (Symbols: AuthService, ContentSafetyService, PostService, FeedService, MatchingService, ChatService, CircleService)
-- `soulred/services/safety_service.py`: AI 多模态与文本风控审核服务，实现涉黄涉政与引流欺诈敏感词实时拦截和状态流转 (Symbols: ContentSafetyService, check_text_safety, check_image_safety, review_post_content)
-- `soulred/services/auth_service.py`: 用户注册、密码验证、JWT 签发、实名/学历认证审核及数据脱敏服务 (Symbols: AuthService, register_user, authenticate_user, submit_verification, apply_privacy_filters)
-- `soulred/services/post_service.py`: 动态图文发布、草稿自动保存恢复、点赞计数器缓存更新与动态详情组装服务 (Symbols: PostService, create_post, save_draft, get_draft, toggle_like, get_post_detail)
-- `soulred/services/feed_service.py`: 小红书式双列瀑布流排序计算引擎，支持卡片自适应宽高比、图片角标及多频道切换排序 (Symbols: FeedService, get_waterfall_feed, calculate_card_aspect_ratio, rank_feed_items)
-- `soulred/services/matching_service.py`: Soul 风格多维特征向量余弦相似度算法、青藤每日精选互选流转与陌生人首句打招呼防骚扰频控 (Symbols: MatchingService, calculate_soul_similarity, search_soul_radar, generate_daily_recommendations, handle_crush_action, check_stranger_message_limit)
-- `soulred/services/chat_service.py`: 即时通讯业务服务，实现基于共同爱好的智能破冰话术推荐、亲密度经验值计算与字母点亮状态机 (Symbols: ChatService, generate_icebreakers, record_message, calculate_intimacy_gain, recall_message, get_conversation_history)
-- `soulred/services/circle_service.py`: 兴趣圈子与社群互动服务，负责圈子管理、多层级楼中楼评论树递归构建及违规封禁操作 (Symbols: CircleService, list_circles, join_circle, post_comment, build_comment_tree, moderate_content)
-- `tests/test_services.py`: 领域业务算法单元测试，全面覆盖契合度打分、瀑布流宽高计算、亲密度晋升及风控拦截逻辑 (Symbols: test_soul_similarity_calc, test_waterfall_card_aspect_ratio, test_intimacy_xp_progression, test_safety_keyword_interception, test_stranger_greeting_quota)
-- `soulred/api/__init__.py`: Web API 根路由包初始化与总路由聚合 (Symbols: api_router)
-- `soulred/api/deps.py`: FastAPI 依赖注入组件，提供数据库 Session、JWT 令牌校验与当前登录用户身份上下文 (Symbols: get_db_session, get_current_user, get_current_active_user)
-- `soulred/api/v1/__init__.py`: 聚合各业务模块的 v1 版本 REST API 路由分发器 (Symbols: v1_router)
-- `soulred/api/v1/auth.py`: 用户注册、登录凭证下发与真实度认证提交 REST 控制器 (Symbols: router, register, login, submit_verification)
-- `soulred/api/v1/users.py`: 个人社交主页档案查询修改、3D虚拟形象设置与颗粒度隐私设置切换 REST 控制器 (Symbols: router, get_my_profile, update_profile, update_privacy_settings, get_user_persona)
-- `soulred/api/v1/feed.py`: 小红书双列瀑布流动态广场接口（支持推荐、附近、关注三主频道无缝切换）REST 控制器 (Symbols: router, get_waterfall_feed)
-- `soulred/api/v1/posts.py`: 动态发布、本地草稿读写、动态详情沉浸展示与快速爱心点赞 REST 控制器 (Symbols: router, create_post, save_draft, get_my_draft, get_post, toggle_like)
-- `soulred/api/v1/matching.py`: 灵魂星盘测评提交、在线雷达匹配（相似度>80%）、每日精选卡片与双向心动 REST 控制器 (Symbols: router, submit_quiz, get_soul_radar, get_daily_recommendations, post_crush_action)
-- `soulred/api/v1/chat.py`: 私信会话列表、历史记录检索、智能破冰话术获取与亲密度密友树状态 REST 控制器 (Symbols: router, list_conversations, get_chat_history, get_icebreakers, get_intimacy_status, recall_message)
-- `soulred/api/v1/circles.py`: 兴趣圈子广场、加入圈子、多级楼中楼评论发表与热评置顶展示 REST 控制器 (Symbols: router, list_circles, join_circle, get_circle_posts, create_comment, get_comment_tree)
-- `soulred/api/ws_chat.py`: WebSocket 实时私信长连接网关（端到端延迟<200ms），包含在线连接管理、心跳保活与瞬断补偿 (Symbols: ConnectionManager, manager, websocket_chat_endpoint)
-- `soulred/static/index.html`: 内置小红书风格双列瀑布流高颜值前端交互 Demo 门户，支持响应式布局、爱心互动及 /docs 导航，专供真实浏览器 E2E 点击验证 (Symbols: renderWaterfallCards, switchChannel, toggleCardLike, loadDemoData)
-- `soulred/main.py`: FastAPI 应用主入口，挂载全局中间件、静态资源、生命周期钩子、系统自检健康探针及交互门户 (Symbols: app, lifespan, health_check, root_portal)
-- `tests/__init__.py`: 测试包根初始化声明 (Symbols: )
-- `tests/conftest.py`: Pytest 全局夹具，提供内存 SQLite 隔离测试会话、TestClient、模拟用户及认证 Header (Symbols: db_session, client, test_user_a, test_user_b, auth_headers_user_a, auth_headers_user_b)
-- `tests/test_models.py`: 底层 ORM 数据实体持久化、级联关系与 AES-256 加解密工具自动化测试用例 (Symbols: test_crypto_aes_gcm, test_user_model_creation, test_post_image_relationships, test_chat_intimacy_relationships)
-- `tests/test_api_endpoints.py`: REST API 全链路集成测试，覆盖用户注册登录、瀑布流三频道切换、动态发布点赞、互选心动与圈子评论 (Symbols: test_auth_flow, test_waterfall_feed_channels, test_post_creation_and_like, test_matching_and_crush_flow, test_circle_comments)
-- `tests/test_websocket.py`: WebSocket 实时长连接端到端集成测试，覆盖双向消息投递与陌生人单日限额频控校验 (Symbols: test_websocket_direct_message_exchange, test_websocket_stranger_daily_limit)
+## 规划文件树结构 ({len(new_arch.file_tree)} 个模块)
+- `soulred/config.py`: 全局配置中心，通过 Pydantic Settings 管理数据库连接、JWT 密钥、AES-256 加密盐、限流阈值及风控策略配置。 (Symbols: Settings, get_settings)
+- `soulred/database.py`: 异步数据库引擎与会话工厂，声明式 Base 模型及数据库自动化初始化生命周期管理。 (Symbols: Base, engine, async_session_maker, get_db, init_db)
+- `soulred/models/user.py`: 用户身份、个人资料档案、真实度认证信息、隐私偏好设置与灵魂星盘标签的 SQLAlchemy ORM 实体定义。 (Symbols: User, UserProfile, UserVerification, UserPrivacySettings, SoulStarChart)
+- `soulred/models/feed.py`: 小红书式图文动态、多图媒体宽高比元数据、话题标签与点赞收藏关系的 ORM 实体定义。 (Symbols: Post, PostMedia, Tag, PostLike, PostBookmark)
+- `soulred/models/social.py`: 社交匹配关系、IM 对话会话、私信消息、亲密度等级记录、兴趣圈子与多层级楼中楼评论的 ORM 实体定义。 (Symbols: MatchRelation, ChatConversation, ChatMessage, IntimacyRecord, Circle, CircleMember, Comment)
+- `soulred/schemas/user.py`: 用户注册登录、个人资料展示/编辑、隐私中心开关及真实度凭证提交的 Pydantic 请求/响应契约模型。 (Symbols: UserRegisterRequest, UserLoginRequest, TokenResponse, UserProfileResponse, UserPrivacyUpdateRequest, VerificationSubmitRequest)
+- `soulred/schemas/feed.py`: 动态发布、草稿箱暂存、双列瀑布流卡片展示（含图片宽高比）、详情浮层及点赞互动的 Pydantic 契约模型。 (Symbols: PostCreateRequest, PostCardResponse, PostDetailResponse, FeedQueryFilter, PostLikeResponse, DraftSaveRequest)
+- `soulred/schemas/social.py`: 灵魂雷达匹配、每日精选互选、WebSocket 消息数据包、亲密度成长数据、兴趣圈子与多层级评论树的 Pydantic 契约模型。 (Symbols: RadarMatchResponse, DailyPickActionRequest, DailyPickCardResponse, ChatMessagePayload, ChatMessageResponse, IntimacyLevelResponse, CircleResponse, CommentCreateRequest, CommentTreeResponse)
+- `soulred/utils/crypto.py`: 基于 AES-256-GCM 的敏感字段加解密工具，以及手机号、姓名等隐私数据的脱敏掩码处理器。 (Symbols: CryptoManager, encrypt_sensitive_data, decrypt_sensitive_data, mask_phone_number, mask_real_name)
+- `tests/conftest.py`: Pytest 共享测试夹具，提供 SQLite in-memory 异步测试数据库、HTTPX 测试客户端、预置模拟用户与测试授权 Token。 (Symbols: async_db_session, test_client, auth_headers_user_a, auth_headers_user_b, sample_posts_data)
+- `soulred/services/auth_service.py`: 用户身份认证服务，包含 Bcrypt 口令哈希校验、JWT 鉴权凭证签发与身份核验逻辑。 (Symbols: AuthService, hash_password, verify_password, create_access_token, verify_access_token, register_user, authenticate_user)
+- `soulred/services/matching_service.py`: 灵魂与兴趣匹配核心算法服务，负责星盘契合度打分、雷达实时在线匹配、青藤风格每日精选生成与双向心动奔赴触发。 (Symbols: MatchingService, calculate_affinity_score, search_radar_matches, generate_daily_picks, handle_pick_action, check_mutual_spark, can_send_stranger_message)
+- `soulred/services/feed_service.py`: 双列瀑布流动态检索与分发服务，支持频道过滤（推荐/附近/关注）、图片宽高比占位计算、草稿自动保存与点赞联动。 (Symbols: FeedService, create_post, get_waterfall_feed, get_post_detail, toggle_post_like, save_draft, get_draft)
+- `soulred/services/im_service.py`: WebSocket 实时私信通讯引擎，负责长连接注册分发、离线消息补偿、已读/撤回/引用处理及陌生人单日发言限频。 (Symbols: ConnectionManager, IMService, connect_client, disconnect_client, send_private_message, mark_messages_read, recall_message, get_conversation_history)
+- `soulred/services/intimacy_service.py`: 亲密度进阶状态机服务，根据聊天字数与连续互动天数累积 EXP，驱动密友树等级升级并解锁专属装扮徽章。 (Symbols: IntimacyService, record_chat_interaction, calculate_intimacy_level, get_intimacy_status, unlock_decorations)
+- `soulred/services/moderation_service.py`: 多模态内容风控合规审核服务，执行敏感词实时拦截、垃圾广告识别、举报处理与违规用户信用惩戒。 (Symbols: ModerationService, check_text_compliance, check_image_compliance, sanitize_text, report_violation, apply_penalty)
+- `soulred/services/circle_service.py`: 兴趣圈子与社群互动服务，负责圈子加入/退出、最新/热门动态置顶、楼中楼多级评论递归树构建。 (Symbols: CircleService, list_circles, join_circle, leave_circle, create_comment, get_comments_tree, pin_comment, toggle_comment_like)
+- `tests/test_matching_algorithm.py`: 灵魂匹配契合度算法、每日精选流转、陌生人单日限制与双向奔赴触发逻辑的独立单元测试集。 (Symbols: test_affinity_score_calculation, test_radar_match_filtering, test_daily_picks_cycle, test_stranger_greeting_rate_limit, test_mutual_spark_connection)
+- `tests/test_feed_and_circles.py`: 动态发布、瀑布流宽高比预留、频道筛选、圈子多层评论树与风控拦截的业务逻辑集成测试集。 (Symbols: test_create_post_success, test_waterfall_aspect_ratio_computation, test_feed_channel_filtering, test_circle_nested_comments_tree, test_content_moderation_interception)
+- `soulred/api/deps.py`: FastAPI 统一依赖注入容器，提供数据库会话、当前登录用户提取、权限检查与服务单例注入。 (Symbols: get_current_user, get_current_active_user, get_db_session, get_auth_service, get_feed_service, get_matching_service, get_im_service)
+- `soulred/api/auth.py`: 用户注册、密码登录与个人登录凭证自检的 RESTful 路由控制器。 (Symbols: router, register, login, get_me)
+- `soulred/api/feeds.py`: 双列瀑布流动态获取、图文发布、详情浮层拉取、点赞收藏与草稿存取的 RESTful 路由控制器。 (Symbols: router, get_feed, create_post_endpoint, get_post_detail_endpoint, like_post, save_user_draft, get_user_draft)
+- `soulred/api/matching.py`: 灵魂星盘测试提交、在线雷达扫描匹配、青藤每日精选推荐与心动互选的 RESTful 路由控制器。 (Symbols: router, get_radar_matches, get_daily_picks, action_daily_pick, submit_star_chart_quiz)
+- `soulred/api/chat.py`: WebSocket 实时私信长连接端点，以及历史消息查询、智能破冰话题建议与亲密度展示的 HTTP 辅助路由。 (Symbols: router, websocket_chat_endpoint, get_conversations, get_chat_history, get_icebreaker_recommendations, get_intimacy_info)
+- `soulred/api/circles.py`: 兴趣圈子分类列表、加入社群、发布圈子动态与楼中楼多级评论互动的 RESTful 路由控制器。 (Symbols: router, get_circles_list, join_circle_endpoint, get_circle_posts, create_comment_endpoint, get_post_comments)
+- `soulred/api/profile.py`: 个人主页展示/编辑、10 秒语音名片设置、真实度认证加密凭证提交与隐私中心偏好管理的 RESTful 路由控制器。 (Symbols: router, get_user_profile, update_user_profile, submit_verification, get_privacy_settings, update_privacy_settings)
+- `soulred/main.py`: FastAPI 应用程序核心主入口，集成全局 CORS、异常拦截中间件、静态文件挂载与生命周期管理。 (Symbols: app, lifespan, main)
+- `soulred/static/index.html`: 高美感单页应用主骨架，集成双列瀑布流广场、沉浸式卡片详情 Lightbox 浮层、灵魂雷达扫描浮动视窗与即时聊天面板。 (Symbols: <!DOCTYPE html>, app-container, waterfall-container, radar-modal, chat-drawer, detail-lightbox)
+- `soulred/static/css/style.css`: 全局现代化暗色极简设计风格样式表，包含双列流错落网格、骨架屏微动效、卡片点赞心动数字联动与雷达扫描波纹动效。 (Symbols: :root, .waterfall-grid, .note-card, .radar-canvas, .intimacy-badge, .lightbox-overlay)
+- `soulred/static/js/app.js`: 前端客户端状态与交互管理脚本，驱动瀑布流无限滚动、卡片图片比例自适应计算、WebSocket 自动重连与私信收发。 (Symbols: SoulRedApp, initWaterfall, initWebSocket, renderCards, openPostLightbox, triggerRadarScan, sendChatMessage)
+- `tests/test_auth_and_profile.py`: 用户注册登录鉴权、个人档案定制、隐私中心开关与 AES-256 凭证加密脱敏的端到端接口测试集。 (Symbols: test_user_register_and_login, test_profile_update_and_voice_intro, test_privacy_settings_distance_hidden, test_verification_encryption_and_masking)
+- `tests/test_im_and_intimacy.py`: WebSocket 实时私信收发、智能破冰话术推荐、亲密度等级解锁与消息撤回已读标记的端到端测试集。 (Symbols: test_websocket_realtime_chat_delivery, test_icebreaker_recommendations, test_intimacy_level_progression, test_message_recall_and_read_receipt)
 
 ## 设计原则
-### SoulRed 社交平台系统架构设计与设计原则 (System Architectural Design)
+### 1. 架构设计原则与分层体系 (Architectural Principles & Layering)
+- **整洁分层与单一职责 (Clean Architecture & SRP)**：系统严格划分为数据持久化层 (Persistence/Schemas)、核心业务与算法服务层 (Domain Services)、以及 Web API 与交互呈现层 (API & Presentation)。层级间单向依赖，高层依赖抽象契约，杜绝反向循环依赖。
+- **全异步无阻塞 I/O (AsyncIO & Reactive Concurrency)**：基于 Python 3.12 原生 AsyncIO、FastAPI 与 SQLAlchemy 2.0 异步引擎 (aiosqlite)，实现双列瀑布流 Feed 高并发检索与 WebSocket 毫秒级私信收发。
+- **双列瀑布流防抖动与骨架屏预计算 (CLS Elimination)**：在数据模型层持久化存储图片宽高比 (aspect_ratio)，服务端直接下发卡片相对高度，前端据此在图片加载完成前精确预留占位高度，杜绝布局偏移 (Cumulative Layout Shift)，保证 60 FPS 滚动流畅度。
+- **混合社交模式解耦 (Dual Social Engine)**：将“小红书式图文消费/生活切片分享”与“Soul/青藤式灵魂算法契合/亲密度进阶”解耦为独立业务服务，通过统一的社交关系链状态机连接。
 
-#### 1. 架构设计哲学与分层策略 (Clean Layered Architecture)
-本项目采用现代化分层架构（Clean / Hexagonal Architecture 思想），实现高内聚、低耦合。各层职责严格隔离：
-- **存储与规范层 (Data & Persistence Layer)**：统一定义 SQLAlchemy ORM 模型、Pydantic v2 输入输出契约及全局安全加解密机制，确保数据原子性与一致性。
-- **核心领域服务层 (Domain Services & Business State Machines)**：承载小红书式瀑布流生成、Soul 风格灵魂契合度与青藤精选推荐算法、即时通讯亲密度养成状态机及 AI 风控审核，不依赖具体 HTTP 协议，具备极高的可测试性与复用性。
-- **接口与网关层 (API Gateway & Real-time Layer)**：提供基于 FastAPI 的 RESTful API 路由与低延迟 WebSocket 长连接网关，并集成静态瀑布流前端展示门户，保障 Browser E2E 测试及生产环境开箱即用。
+### 2. 模块划分与并行研发策略 (Modularity & Parallel Engineering Strategy)
+- **Module 1 (module_data_persistence)**：由资深数据工程师负责，产出数据库实体、Pydantic 契约模型与加解密基础设施。对外提供稳定的数据类型与持久化接口。
+- **Module 2 (module_core_domain)**：由算法与核心业务工程师负责，并发实现灵魂契合度计算 (向量余弦/Jaccard 混合加权)、双列流分发过滤、WebSocket 连接管理、AI 敏感词风控拦截、以及亲密度树等级跃迁算法。
+- **Module 3 (module_api_web_interface)**：由全栈/API 工程师负责，挂载 FastAPI 路由端点、依赖注入鉴权中间件、静态资源托管，并基于现代暗色高对比度审美 (Linear/Soul/RED 风格) 构建双列瀑布流、动态详情 Lightbox 浮层与雷达扫描动效。
 
-#### 2. 小红书风格双列自适应瀑布流算法 (Xiaohongshu-Style Waterfall Feed)
-- **宽高比自适应与骨架屏预计算**：支持主流切图比例（1:1 正方形, 3:4 经典人像, 4:3 横构图）。Feed 接口直接返回计算好的卡片预估高度 `aspect_ratio` 与骨架屏色彩标记，前端双列渲染无需等待图片异步加载完成即可精准分配左右列高度平衡，杜绝页面加载闪烁与布局颠簸（Cumulative Layout Shift, CLS）。
-- **多频道高效分发**：支持“推荐 (Recommend)”、“附近 (Nearby)”、“关注 (Following)”三频道独立索引排序；推荐频道融入时效性衰减（Time-decay）与互动热度（Likes + Comments）混合打分，附近频道基于地理距离切片，响应耗时严格控制在 800ms 内。
+### 3. 数据安全与隐私合规防护 (Security, Privacy & Compliance)
+- **敏感隐私加密存储 (AES-256-GCM)**：手机号、实名认证信息、职业证书等 PII 敏感信息在写入数据库前通过 Cryptography AES-256-GCM 加密，数据库底层不存明文；响应层严格执行脱敏脱壳掩码展示。
+- **防骚扰与限频风控 (Anti-Harassment Throttling)**：陌生人单日仅限发送 1 条纯文本招呼，禁止多媒体附件；双向“心动奔赴”后方可解锁多媒体会话并激活亲密度成长链。
+- **多层级内容安全审查 (Multi-tiered Moderation)**：文本发布实时执行敏感词正则前置拦截；图片与富文本经由风控服务多模态打标，可疑内容标记存入审核缓冲池并在前台实施软隔离。
 
-#### 3. 灵魂与青藤互选推荐匹配引擎 (Matching & Recommendation Engine)
-- **灵魂星盘与多维契合度向量算法**：用户完成包含 MBTI 性格、生活习惯与交友期望的轻量测试后，向量化为多维特征数组。Soul 风格“灵魂雷达”采用余弦相似度（Cosine Similarity）与加权欧氏距离，毫秒级筛选出契合度 >= 80% 的在线用户。
-- **青藤每日精选与双向奔赴状态机**：每日凌晨由推荐引擎离线生成 5-10 张专属精选推荐卡片；用户支持“心动 (Crush)”或“跳过 (Skip)”。当双方互相心动时，原子性触发 `CrushStatusEnum.MUTUAL`（双向奔赴）事件，触发系统级动画消息并自动初始化专属私聊会话通道。
-- **陌生人反骚扰防线**：未经互选或非好友关系的陌生人，限制单日仅可发送 1 条打招呼纯文本消息，禁止发送图片及语音，从底层杜绝垃圾引流与骚扰。
-
-#### 4. 即时通讯与亲密度进阶状态机 (Real-Time IM & Chat Intimacy Lifecycle)
-- **高并发低延迟长连接网关**：基于 Starlette WebSocket 构建连接管理器（ConnectionManager），支持单节点数千并发连接、消息端到端投递 P95 < 200ms、离线消息持久化存储与上线拉取补偿。
-- **智能破冰指南生成**：根据聊天双方的兴趣标签交集（如共同去过的展馆、同类音乐标签、相同 MBTI）动态提取关键词，自动合成破冰首句建议（如：“你们都喜欢 #民谣livehouse，聊聊最近去过的现场吧”）。
-- **亲密度点亮机制 (Soul-Style Intimacy Level)**：通过持续互动天数累积与聊天字数（每日设上限防作弊）计算亲密度经验值 (XP)，阶梯式点亮字母与亲密徽章（从“初识萌芽”到“挚友星辰”），解锁专属聊天气泡与合影挂件。
-- **消息撤回与安全风控**：支持在 2 分钟时限内撤回消息，并提供两步式快速拉黑与举报入口。
-
-#### 5. 内容安全风控与合规保障 (Content Safety & Risk Control)
-- **多层级实时风控引擎**：在动态发布、评论提交和私信通信的关键链路中，前置接入敏感词实时正则阻断、涉政涉黄涉暴特征识别及引流诈骗模式检测。
-- **违规处置分级机制**：违规内容自动阻断；高可疑内容转入人工待审队列；涉事账户根据严重程度触发警告、禁言或即时封禁。
-
-#### 6. 严苛隐私防护与零知识保护 (Privacy & Credential Security)
-- **敏感数据 AES-256 加密**：用户手机号、实名认证信息、身份证件摘要等核心凭据在入库前采用 AES-256-GCM 高强度密文存储，查询时按需脱敏解密，防御数据库拖库泄露。
-- **颗粒度隐私控制**：用户可一键开启“隐藏距离”、“不让附近的人看到我”及“通讯录联系人隐身”，系统在公域 Feed 与雷达搜索中严格过滤隐身用户坐标。
-
-#### 7. 并行工程分工策略 (Parallel Engineering Strategy)
-严格解耦为 3 个子模块，各工程师基于固定的文件边界与强类型接口规范并行开发：
-1. **Module 1 (mod_data_model)**：率先完成数据库模型、Pydantic 契约、加密工具与配置，奠定系统数据地基；
-2. **Module 2 (mod_business_logic)**：并发实现瀑布流算子、推荐匹配、亲密度与风控逻辑，依托单元测试进行独立验证；
-3. **Module 3 (mod_api_gateway)**：并行搭建 REST 控制器、WebSocket 实时网关及 Web 前端 Portal，并执行双轨自动化回归测试。
+### 4. 测试与验证策略 (Testing & Reliability)
+- **分层测试体系**：单元测试覆盖核心算法 (契合度打分、亲密度进阶状态机、敏感词脱敏)，集成测试覆盖完整 RESTful API 契约，异步端到端测试验证 WebSocket 双向通讯和实时收发。
+- **测试隔离与可复现性**：使用 pytest-asyncio 与 SQLite in-memory 异步测试夹具，测试之间自动重置数据库状态，保障 CI/CD 流水线百毫秒级快速运行。

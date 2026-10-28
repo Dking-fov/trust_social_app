@@ -96,5 +96,56 @@
         "所有用户身份认证凭证与手机号码均采用 AES-256 密文存储，敏感信息在客户端一律脱敏显示。"
       ]
     }
+  ],
+  "competitor_benchmarks": [
+    {
+      "competitor_name": "小红书 (RED)",
+      "target_audience": "注重生活品质与审美表达的年轻创作者",
+      "core_strengths": [
+        "双列沉浸式瀑布流",
+        "强视觉笔记卡片",
+        "极高转化互动"
+      ],
+      "key_features_to_adopt": [
+        "双列瀑布流探索广场",
+        "高分辨率图文详情浮层",
+        "多维兴趣标签过滤"
+      ],
+      "our_differentiation": "引入链上信誉鉴权与真实社交关系链评分，杜绝虚假人设与软广刷量"
+    },
+    {
+      "competitor_name": "Soul App",
+      "target_audience": "渴望同频共鸣、无现实社交压力的青年一代",
+      "core_strengths": [
+        "灵魂雷达匹配",
+        "即时破冰",
+        "星球兴趣群组"
+      ],
+      "key_features_to_adopt": [
+        "兴趣契合度算法匹配",
+        "即时破冰与亲密度成长体系"
+      ],
+      "our_differentiation": "去中心化隐私加解密与零知识证明，保障个人偏好与聊天记录绝对隐私"
+    },
+    {
+      "competitor_name": "Linear / Notion",
+      "target_audience": "追求极致流畅体验的高效协作与深度用户",
+      "core_strengths": [
+        "极简暗色美学",
+        "毫秒级响应",
+        "快捷键流式交互"
+      ],
+      "key_features_to_adopt": [
+        "全局暗色高对比度现代设计语言",
+        "无缝轻量状态机与微交互动效"
+      ],
+      "our_differentiation": "结合青年潮酷视觉与专业级数据隔离架构"
+    }
+  ],
+  "prototype_highlights": [
+    "双列瀑布流广场及多频道实时切换（推荐/热门/圈子）",
+    "笔记卡片微动效与点赞心动数字实时联动",
+    "大图详情浮层 Lightbox 与多级评论展开",
+    "灵魂匹配雷达动效与雷达扫描匹配卡片"
   ]
 }

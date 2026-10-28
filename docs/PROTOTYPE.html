@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>soulred-social-platform - 高保真交互原型</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            redBrand: '#ff2442',
+            redHover: '#e01e38',
+            redSubtle: '#fff0f2'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 模拟瀑布流自适应布局 */
+    .masonry-col {
+      break-inside: avoid;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- Top Prototype Banner Notification -->
+  <div class="bg-gradient-to-r from-indigo-900 via-slate-900 to-sky-950 text-white px-4 py-2.5 text-xs flex flex-wrap items-center justify-between gap-2 border-b border-indigo-500/30 sticky top-0 z-50 shadow-md">
+    <div class="flex items-center space-x-2">
+      <span class="px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30 flex items-center space-x-1">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+        <span>交互原型设计阶段 (Prototype Phase)</span>
+      </span>
+      <span class="text-slate-300">本页面为真实可交互原型，由 UI/UX Prototyper 根据竞品分析与 PRD 自动生成</span>
+    </div>
+    <div class="flex items-center space-x-2">
+      <button onclick="parent.postMessage({'action': 'approve_prototype'}, '*')" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition shadow-sm flex items-center space-x-1 cursor-pointer">
+        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+        <span>确认原型并开始开发</span>
+      </button>
+      <button onclick="window.close()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] cursor-pointer">
+        关闭预览
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Navigation Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-10 z-40 px-4 lg:px-8 py-3 flex items-center justify-between shadow-sm">
+    <!-- Brand Logo -->
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 to-red-600 flex items-center justify-center text-white font-bold shadow-md shadow-rose-500/20">
+        <i data-lucide="camera" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <h1 class="text-base font-extrabold text-slate-900 tracking-tight">soulred-social-platform</h1>
+        <p class="text-[10px] text-slate-500 font-medium">竞品吸纳: 小红书瀑布流 + Soul 双向破冰互动</p>
+      </div>
+    </div>
+
+    <!-- Center Search Bar -->
+    <div class="hidden md:flex flex-1 max-w-md mx-6">
+      <div class="relative w-full">
+        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        <input id="search-input" oninput="filterCards()" type="text" placeholder="搜索人像风格、摄影师、标签、笔记..." class="w-full pl-9 pr-4 py-2 rounded-full bg-slate-100 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 transition" />
+      </div>
+    </div>
+
+    <!-- Right User Tools -->
+    <div class="flex items-center space-x-3">
+      <button class="px-3.5 py-1.5 rounded-full bg-rose-500 hover:bg-rose-600 active:bg-rose-700 text-white text-xs font-semibold shadow-md shadow-rose-500/20 flex items-center space-x-1.5 transition cursor-pointer">
+        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+        <span>发布动态</span>
+      </button>
+      <div class="w-8 h-8 rounded-full bg-slate-200 border border-slate-300 overflow-hidden flex items-center justify-center cursor-pointer">
+        <i data-lucide="user" class="w-4 h-4 text-slate-600"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tag Filter Bar -->
+  <div class="bg-white border-b border-slate-200 px-4 lg:px-8 py-2.5 flex items-center space-x-2 overflow-x-auto text-xs shrink-0">
+    <button onclick="selectTag('全部')" class="tag-btn px-3 py-1 rounded-full bg-slate-900 text-white font-medium shrink-0 transition shadow-sm">全部</button>
+    <button onclick="selectTag('街拍穿搭')" class="tag-btn px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium shrink-0 transition">街拍穿搭</button>
+    <button onclick="selectTag('复古写真')" class="tag-btn px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium shrink-0 transition">复古写真</button>
+    <button onclick="selectTag('情绪人像')" class="tag-btn px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium shrink-0 transition">情绪人像</button>
+    <button onclick="selectTag('日系胶片')" class="tag-btn px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium shrink-0 transition">日系胶片</button>
+    <button onclick="selectTag('赛博夜景')" class="tag-btn px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium shrink-0 transition">赛博夜景</button>
+    <button onclick="selectTag('清新人像')" class="tag-btn px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium shrink-0 transition">清新人像</button>
+    <button onclick="selectTag('光影人像')" class="tag-btn px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium shrink-0 transition">光影人像</button>
+  </div>
+
+  <!-- Main Waterfall Grid Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+    <div id="cards-grid" class="columns-2 sm:columns-3 lg:columns-4 gap-4 space-y-4">
+      <!-- Cards rendered dynamically via JS -->
+    </div>
+  </main>
+
+  <!-- Interactive Lightbox Modal -->
+  <div id="detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col md:flex-row overflow-hidden shadow-2xl relative">
+      <!-- Left: Image Preview -->
+      <div class="md:w-3/5 bg-slate-950 flex items-center justify-center relative min-h-[300px]">
+        <img id="modal-img" src="" alt="预览图" class="max-h-[85vh] w-auto object-contain" />
+        <button onclick="closeModal()" class="absolute top-3 right-3 md:hidden w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <!-- Right: Details & Discussion -->
+      <div class="md:w-2/5 p-6 flex flex-col justify-between bg-white overflow-y-auto">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center space-x-2.5">
+              <img id="modal-author-img" src="" class="w-8 h-8 rounded-full object-cover border border-slate-200" />
+              <div>
+                <div id="modal-author-name" class="font-bold text-xs text-slate-900">作者</div>
+                <div class="text-[10px] text-slate-400">已认证创作者</div>
+              </div>
+            </div>
+            <button onclick="closeModal()" class="hidden md:flex text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <h2 id="modal-title" class="text-sm font-bold text-slate-900 mt-4 leading-snug">详情标题</h2>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            这组作品拍摄于初夏的午后，光影透过枝叶散落，捕捉了最自然的微表情与氛围感。选用 50mm f/1.2 定焦镜头，还原真实肌肤质感与胶片颗粒感。
+          </p>
+          <div class="flex items-center space-x-1.5 mt-3">
+            <span id="modal-tag" class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 text-[11px] font-semibold">标签</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px]">人像摄影</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px]">视觉灵感</span>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 mt-6 flex items-center justify-between">
+          <button id="modal-like-btn" onclick="toggleModalLike()" class="flex items-center space-x-1 text-slate-600 hover:text-rose-500 font-semibold text-xs transition cursor-pointer">
+            <i data-lucide="heart" class="w-4 h-4"></i>
+            <span id="modal-like-count">0</span>
+          </button>
+          <button class="px-4 py-1.5 rounded-full bg-rose-500 hover:bg-rose-600 text-white font-semibold text-xs shadow-sm transition cursor-pointer">
+            破冰打招呼
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const mockData = [{"id": 1, "title": "雨后复古胶片街拍 · 电影感人像调色", "author": "摄影师阿泽", "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80", "image": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80", "likes": 3421, "tag": "复古写真", "aspect": "aspect-[3/4]"}, {"id": 2, "title": "日光倾城，初夏日系胶片情绪人像", "author": "林小鹿", "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80", "image": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&auto=format&fit=crop&q=80", "likes": 5120, "tag": "日系胶片", "aspect": "aspect-[4/5]"}, {"id": 3, "title": "赛博霓虹夜色下光影交错的眼神", "author": "CyberVision", "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80", "image": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&auto=format&fit=crop&q=80", "likes": 1890, "tag": "赛博夜景", "aspect": "aspect-[3/4]"}, {"id": 4, "title": "极简白背心与清透妆容 · 高级感肖像", "author": "Studio Nine", "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80", "image": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&auto=format&fit=crop&q=80", "likes": 4209, "tag": "清新人像", "aspect": "aspect-[4/5]"}, {"id": 5, "title": "夕阳逆光下的微风发丝，温柔至极", "author": "橘子汽水", "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80", "image": "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=600&auto=format&fit=crop&q=80", "likes": 6732, "tag": "光影人像", "aspect": "aspect-[3/4]"}, {"id": 6, "title": "秋日落叶与羊毛围巾，复古暖冬人像", "author": "AutumnLog", "avatar": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80", "image": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600&auto=format&fit=crop&q=80", "likes": 2841, "tag": "街拍穿搭", "aspect": "aspect-[4/5]"}];
+    let activeTag = '全部';
+    let currentModalCard = null;
+
+    function renderCards(data) {
+      const grid = document.getElementById('cards-grid');
+      grid.innerHTML = data.map(item => `
+        <div onclick="openModal(${item.id})" class="masonry-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-100 group cursor-pointer">
+          <div class="relative overflow-hidden bg-slate-100 ${item.aspect}">
+            <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+            <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md text-white text-[10px] font-medium tracking-wide">
+              ${item.tag}
+            </span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-bold text-xs text-slate-800 line-clamp-2 leading-relaxed group-hover:text-rose-600 transition-colors">
+              ${item.title}
+            </h3>
+            <div class="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-50 text-[11px] text-slate-500">
+              <div class="flex items-center space-x-1.5 truncate max-w-[65%]">
+                <img src="${item.avatar}" class="w-4 h-4 rounded-full object-cover shrink-0" />
+                <span class="truncate">${item.author}</span>
+              </div>
+              <button onclick="event.stopPropagation(); toggleCardLike(${item.id})" class="flex items-center space-x-1 hover:text-rose-500 transition cursor-pointer">
+                <i data-lucide="heart" class="w-3.5 h-3.5 text-slate-400 hover:text-rose-500"></i>
+                <span id="card-like-${item.id}">${item.likes}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function selectTag(tag) {
+      activeTag = tag;
+      document.querySelectorAll('.tag-btn').forEach(btn => {
+        if (btn.innerText === tag) {
+          btn.className = "tag-btn px-3 py-1 rounded-full bg-slate-900 text-white font-medium shrink-0 transition shadow-sm";
+        } else {
+          btn.className = "tag-btn px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium shrink-0 transition";
+        }
+      });
+      filterCards();
+    }
+
+    function filterCards() {
+      const query = document.getElementById('search-input').value.toLowerCase().trim();
+      let filtered = mockData;
+      if (activeTag !== '全部') {
+        filtered = filtered.filter(item => item.tag === activeTag);
+      }
+      if (query) {
+        filtered = filtered.filter(item => item.title.toLowerCase().includes(query) || item.author.toLowerCase().includes(query));
+      }
+      renderCards(filtered);
+    }
+
+    function openModal(id) {
+      const card = mockData.find(c => c.id === id);
+      if (!card) return;
+      currentModalCard = card;
+      document.getElementById('modal-img').src = card.image;
+      document.getElementById('modal-title').innerText = card.title;
+      document.getElementById('modal-author-name').innerText = card.author;
+      document.getElementById('modal-author-img').src = card.avatar;
+      document.getElementById('modal-tag').innerText = card.tag;
+      document.getElementById('modal-like-count').innerText = card.likes;
+      document.getElementById('detail-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      document.getElementById('detail-modal').classList.add('hidden');
+    }
+
+    function toggleCardLike(id) {
+      const card = mockData.find(c => c.id === id);
+      if (!card) return;
+      card.likes += 1;
+      const el = document.getElementById(`card-like-${id}`);
+      if (el) el.innerText = card.likes;
+    }
+
+    function toggleModalLike() {
+      if (!currentModalCard) return;
+      currentModalCard.likes += 1;
+      document.getElementById('modal-like-count').innerText = currentModalCard.likes;
+      const el = document.getElementById(`card-like-${currentModalCard.id}`);
+      if (el) el.innerText = currentModalCard.likes;
+    }
+
+    // Initial render
+    renderCards(mockData);
+  </script>
+</body>
+</html>
