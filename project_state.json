@@ -1,5 +1,6 @@
 {
   "project_name": "trust_social_app",
+  "github_url": "https://github.com/Dking-fov/trust_social_app",
   "pipeline_status": "IDLE",
   "token_summary": {
     "input_tokens": 108283,
